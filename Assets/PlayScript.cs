@@ -158,9 +158,13 @@ public class PlayScript : MonoBehaviour
     /// </summary>
     /// <param name="coord">World coordinate</param>
     /// <returns>Matrix chessboard coordinate</returns>
-    int ConvertToIntCoordinate(float coord)
+    int ConvertxToIntCoordinate(float coord)
     {
         return (int)((coord - LeftBottomCorner.x) / (DISTANCE) + DISTANCE * 0.5);
+    }
+    int ConvertyToIntCoordinate(float coord)
+    {
+        return (int)((coord - LeftBottomCorner.y) / (DISTANCE) + DISTANCE * 0.5);
     }
 
     /// <summary>
@@ -180,6 +184,11 @@ public class PlayScript : MonoBehaviour
 
     // Use this for initialization
     void Start()
+    {
+
+    }
+
+    void Start2()
     {
         LeftBottomCorner = ST.Instanse.LeftBottomCorner;
         RightTopCorner = ST.Instanse.RightTopCorner;
@@ -204,8 +213,8 @@ public class PlayScript : MonoBehaviour
     /// <returns>Return true if we can</returns>
     bool CanHitBack()
     {
-        int x = ConvertToIntCoordinate(ChosenChecker.transform.position.x);
-        int y = ConvertToIntCoordinate(ChosenChecker.transform.position.y);
+        int x = ConvertxToIntCoordinate(ChosenChecker.transform.position.x);
+        int y = ConvertyToIntCoordinate(ChosenChecker.transform.position.y);
         if (WhiteMoveExpected)
         {
             if (CheckBlackChecker(x - 1, y - 1) && CheckEmptyCell(x - 2, y - 2))
@@ -251,8 +260,8 @@ public class PlayScript : MonoBehaviour
     bool CanHit()
     {
 
-        int x = ConvertToIntCoordinate(ChosenChecker.transform.position.x);
-        int y = ConvertToIntCoordinate(ChosenChecker.transform.position.y);
+        int x = ConvertxToIntCoordinate(ChosenChecker.transform.position.x);
+        int y = ConvertyToIntCoordinate(ChosenChecker.transform.position.y);
         if (WhiteMoveExpected)
         {
             if (CheckBlackChecker(x - 1, y + 1) && CheckEmptyCell(x - 2, y + 2))
@@ -329,7 +338,7 @@ public class PlayScript : MonoBehaviour
             for (int i = 0; i < BlackCheckers.Count; i++)
             {
                 obj = BlackCheckers[i];
-                if (x == ConvertToIntCoordinate(obj.transform.position.x) && y == ConvertToIntCoordinate(obj.transform.position.y))
+                if (x == ConvertxToIntCoordinate(obj.transform.position.x) && y == ConvertyToIntCoordinate(obj.transform.position.y))
                 {
                     Array[y, x] = 0;
                     BlackCheckers.RemoveAt(i);
@@ -343,7 +352,7 @@ public class PlayScript : MonoBehaviour
             for (int i = 0; i < WhiteCheckers.Count; i++)
             {
                 obj = WhiteCheckers[i];
-                if (x == ConvertToIntCoordinate(obj.transform.position.x) && y == ConvertToIntCoordinate(obj.transform.position.y))
+                if (x == ConvertxToIntCoordinate(obj.transform.position.x) && y == ConvertyToIntCoordinate(obj.transform.position.y))
                 {
                     Array[y, x] = 0;
                     WhiteCheckers.RemoveAt(i);
@@ -441,7 +450,7 @@ public class PlayScript : MonoBehaviour
             WhiteMoveExpected = p.WhiteMove;
             obj = Instantiate(WhiteFigure);
             obj.transform.position = new Vector3(p.x, p.y, -1);
-            Array[ConvertToIntCoordinate(p.y), ConvertToIntCoordinate(p.x)] = 1;
+            Array[ConvertyToIntCoordinate(p.y), ConvertxToIntCoordinate(p.x)] = 1;
             WhiteCheckers.Add(obj);
 
         }
@@ -450,7 +459,7 @@ public class PlayScript : MonoBehaviour
             WhiteMoveExpected = p.WhiteMove;
             obj = Instantiate(BlackFigure);
             obj.transform.position = new Vector3(p.x, p.y, -1);
-            Array[ConvertToIntCoordinate(p.y), ConvertToIntCoordinate(p.x)] = 2;
+            Array[ConvertyToIntCoordinate(p.y), ConvertxToIntCoordinate(p.x)] = 2;
             BlackCheckers.Add(obj);
         }
 
@@ -462,7 +471,7 @@ public class PlayScript : MonoBehaviour
 
         if (MouseClicked && Array[y, x] == 0)
         {
-            Array[ConvertToIntCoordinate(ChosenCheckerOldPos.y), ConvertToIntCoordinate(ChosenCheckerOldPos.x)] = 0;
+            Array[ConvertyToIntCoordinate(ChosenCheckerOldPos.y), ConvertxToIntCoordinate(ChosenCheckerOldPos.x)] = 0;
             if (WhiteMoveExpected)
             {
                 Array[y, x] = 1;
@@ -519,10 +528,12 @@ public class PlayScript : MonoBehaviour
     {
         if (MousePos.x > LeftBottomCorner.x - DISTANCE * 0.5 && MousePos.y < RightTopCorner.y + DISTANCE * 0.5 && MousePos.x < RightTopCorner.x + DISTANCE * 0.5 && MousePos.y > LeftBottomCorner.y - DISTANCE * 0.5)
         {
+
             return true;
         }
         else
         {
+
             return false;
         }
     }
@@ -564,7 +575,7 @@ public class PlayScript : MonoBehaviour
             obj = o as GameObject;
             if (!MouseClicked)
             {
-                SetRedSignalInCheckerPos(ConvertToIntCoordinate(obj.transform.position.x), ConvertToIntCoordinate(obj.transform.position.y));
+                SetRedSignalInCheckerPos(ConvertxToIntCoordinate(obj.transform.position.x), ConvertyToIntCoordinate(obj.transform.position.y));
             }
             else
             {
@@ -604,7 +615,7 @@ public class PlayScript : MonoBehaviour
         foreach (Object o in figures)
         {
             obj = o as GameObject;
-            if (ConvertToIntCoordinate(obj.transform.position.x) == x && ConvertToIntCoordinate(obj.transform.position.y) == y)
+            if (ConvertxToIntCoordinate(obj.transform.position.x) == x && ConvertyToIntCoordinate(obj.transform.position.y) == y)
             {
                 return true;
             }
@@ -660,7 +671,7 @@ public class PlayScript : MonoBehaviour
     void Init()
     {
         MousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        OldIntCheckerPos = new Vector2(ConvertToIntCoordinate(ChosenCheckerOldPos.x), ConvertToIntCoordinate(ChosenCheckerOldPos.y));
+        OldIntCheckerPos = new Vector2(ConvertxToIntCoordinate(ChosenCheckerOldPos.x), ConvertyToIntCoordinate(ChosenCheckerOldPos.y));
     }
 
 
@@ -694,14 +705,17 @@ public class PlayScript : MonoBehaviour
         // White checker choose
         if (WhiteMoveExpected && Click() && !MouseClicked && !MultiHit)
         {
+
             if (!HaveToHit(WhiteCheckers))
             {
+
                 TryToChooseChecker(WhiteCheckers);
                 HideRedSignals();
 
             }
             else
             {
+  
                 TryToChooseCheckerToHit();
             }
             return;
@@ -731,14 +745,14 @@ public class PlayScript : MonoBehaviour
         // Checker set
         if (Click() && MouseClicked)
         {
-            old_x = ConvertToIntCoordinate(ChosenCheckerOldPos.x);
-            old_y = ConvertToIntCoordinate(ChosenCheckerOldPos.y);
+            old_x = ConvertxToIntCoordinate(ChosenCheckerOldPos.x);
+            old_y = ConvertyToIntCoordinate(ChosenCheckerOldPos.y);
 
             // If we in the game square
             if (MousePosIsInTheGameSquare())
             {
-                x = ConvertToIntCoordinate(MousePos.x);
-                y = ConvertToIntCoordinate(MousePos.y);
+                x = ConvertxToIntCoordinate(MousePos.x);
+                y = ConvertyToIntCoordinate(MousePos.y);
 
                 // Maked a mistake with checker setting
                 if (!MultiHit && x == old_x && y == old_y)
@@ -777,14 +791,29 @@ public class PlayScript : MonoBehaviour
         }
 
     }
+    void StartGameWithPlayer()
+    {
+        SetCheckersInTheFirstPosition();
+    }
 
     // Update is called once per frame
     void Update()
     {
-        Init();
-        if (!ST.Instanse.GameMenuOpened)
+
+        if (ST.Instanse.GameStarted)
         {
-            Playing();
+            Init();
+            if (!ST.Instanse.GameMenuOpened)
+            {
+                Playing();
+            }
         }
+        if (ST.Instanse.StartGame)
+        {
+            Start2();
+            ST.Instanse.StartGame = false;
+            ST.Instanse.GameStarted = true;
+        }
+
     }
 }

@@ -100,7 +100,7 @@ public class ButtonScript : MonoBehaviour
             }
         }
         if (!Sounds)
-        { 
+        {
             ST.Instanse.Music = false;
         }
     }
@@ -108,7 +108,7 @@ public class ButtonScript : MonoBehaviour
     void Update()
     {
         Init();
- 
+
 
         if (MousePos.x > Button_x1 && MousePos.x < Button_x2 &&
             MousePos.y > Button_y1 && MousePos.y < Button_y2)
@@ -129,14 +129,15 @@ public class ButtonScript : MonoBehaviour
                 if (Button.name == "NewGameButton")
                 {
                     ST.Instanse.Continue = false;
-                    Application.LoadLevel("Game");
+                    ST.Instanse.StartGame = true;
+                    Camera.main.transform.position = new Vector3(-40.0f, Camera.main.transform.position.y, Camera.main.transform.position.z);
                     File.WriteAllText("Save", string.Empty);
                 }
                 if (Button.name == "ResumeGameButton")
                 {
                     if (Application.loadedLevelName == "Game")
                     {
-                        
+
                     }
                     else
                     {
@@ -157,27 +158,14 @@ public class ButtonScript : MonoBehaviour
                 }
                 if (Button.name == "SettingsButton")
                 {
-                    if (Application.loadedLevelName == "Game")
-                    {
-                        CameraMove = 0.3f;
-                        ST.Instanse.MenuGameMove = 0.1f;
-                    }
-                    else
-                    {
-                        CameraMove = 0.8f;
-                    }
+
+                    CameraMove = 0.8f;
                 }
                 if (Button.name == "MainMenuButton")
                 {
-                    if (Application.loadedLevelName == "Game")
-                    {
-                        CameraMove = -0.3f;
-                        ST.Instanse.MenuGameMove = -0.1f;
-                    }
-                    else
-                    {
-                        CameraMove = -0.8f;
-                    }
+
+                    CameraMove = -0.8f;
+
                 }
                 if (Button.name == "LanguageButton")
                 {
@@ -199,7 +187,7 @@ public class ButtonScript : MonoBehaviour
                         {
                             Button.GetComponent<Renderer>().material.mainTexture = EnDarkTexture;
                             ST.Instanse.Music = false;
-                        } 
+                        }
                         else
                         {
                             Button.GetComponent<Renderer>().material.mainTexture = EnLightTexture;

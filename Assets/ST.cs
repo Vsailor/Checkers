@@ -18,18 +18,22 @@ public class ST : MonoBehaviour {
     public bool ArrowIsActive;
     public bool ArrowInTheTop;
     public string DebugFileName;
+    public bool StartGame;
+    public bool GameStarted;
 	// Use this for initialization
 	void Start () {
         Music = true;
         Sounds = true;
-        LeftBottomCorner = new Vector2(-2.84f, -2.8f);
-        RightTopCorner = new Vector2(2.83f,2.83f);
+        LeftBottomCorner = new Vector2(-47.1f, -2.8f);
+        RightTopCorner = new Vector2(-41.44f, 2.83f);
         GameMenuOpened = false;
         MenuGameMove = 0;
         Language = System.Convert.ToBoolean(File.ReadAllText("Lang.cfg"));
         SpeedMenu = 0;
         ArrowInTheTop = true;
         ArrowIsActive = true;
+        StartGame = false;
+        GameStarted = false;
 	}
 	
 	// Update is called once per frame
