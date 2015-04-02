@@ -20,6 +20,7 @@ public class PlayScript : MonoBehaviour
     public const float DISTANCE = (float)(0.81);
 
     public GameObject RedSignal;
+    public GameObject GreenSignal;
     List<GameObject> RedSignals;
     // All figures
     List<GameObject> WhiteCheckers;
@@ -71,6 +72,11 @@ public class PlayScript : MonoBehaviour
         RedSignals.Add(obj);
     }
 
+    void SetGreenSignalInCheckerPos(int x, int y)
+    {
+        GreenSignal.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -0.25f);
+    }
+
     void HideRedSignals()
     {
         for (int i = 0; i < RedSignals.Count; i++)
@@ -81,6 +87,10 @@ public class PlayScript : MonoBehaviour
         }
     }
 
+    void HideGreenSignal()
+    {
+        GreenSignal.transform.position = new Vector3(GreenSignal.transform.position.x, GreenSignal.transform.position.y, 1f);
+    }
     void SetCheckersInTheFirstPosition()
     {
         if (!ST.Instanse.Continue)
@@ -123,7 +133,7 @@ public class PlayScript : MonoBehaviour
                 Array[5, i * 2 + 1] = 2;
             }
 
-            Save();
+            //Save();
         }
         else
         {
@@ -198,10 +208,10 @@ public class PlayScript : MonoBehaviour
         MultiHit = false;
         IsHaveToHit = false;
         SetCheckersInTheFirstPosition();
-        if (!File.Exists("Save"))
+        /*if (!File.Exists("Save"))
         {
             File.WriteAllText("Save", string.Empty);
-        }
+        }*/
         obj = new GameObject();
         FiguresHaveToHit = new List<GameObject>();
         RedSignals = new List<GameObject>();
@@ -468,6 +478,7 @@ public class PlayScript : MonoBehaviour
     //Go to position in the array
     void GoTo(int x, int y)
     {
+        HideGreenSignal();
 
         if (MouseClicked && Array[y, x] == 0)
         {
@@ -548,6 +559,7 @@ public class PlayScript : MonoBehaviour
                 MouseClicked = true;
                 ChosenChecker = obj;
                 ChosenCheckerOldPos = obj.transform.position;
+                SetGreenSignalInCheckerPos(ConvertxToIntCoordinate(ChosenChecker.transform.position.x), ConvertyToIntCoordinate(ChosenChecker.transform.position.y));
                 break;
             }
         }
@@ -566,6 +578,7 @@ public class PlayScript : MonoBehaviour
                     MouseClicked = true;
                     ChosenChecker = obj;
                     ChosenCheckerOldPos = obj.transform.position;
+                    SetGreenSignalInCheckerPos(ConvertxToIntCoordinate(ChosenChecker.transform.position.x), ConvertyToIntCoordinate(ChosenChecker.transform.position.y));
 
                 }
             }
@@ -607,7 +620,7 @@ public class PlayScript : MonoBehaviour
             WhiteMoveExpectedChange();
         }
         FiguresHaveToHit.Clear();
-        Save();
+        //Save();
     }
 
     bool FindFigureToHit(int x, int y, List<GameObject> figures)
@@ -738,8 +751,10 @@ public class PlayScript : MonoBehaviour
         // Checker move
         if (!Click() && MouseClicked)
         {
+            
+            /*
             MoveCheckerAfterTheCursor();
-            return;
+            return;*/
         }
 
         // Checker set
@@ -755,12 +770,13 @@ public class PlayScript : MonoBehaviour
                 y = ConvertyToIntCoordinate(MousePos.y);
 
                 // Maked a mistake with checker setting
+                /*
                 if (!MultiHit && x == old_x && y == old_y)
                 {
                     ChosenChecker.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -1);
                     MouseClicked = false;
                     return;
-                }
+                }*/
 
                 // Chosen cell is empty
                 if (CheckEmptyCell(x, y))
@@ -773,7 +789,7 @@ public class PlayScript : MonoBehaviour
                         {
                             GoTo(x, y);
                             WhiteMoveExpectedChange();
-                            Save();
+                            //Save();
                             return;
                         }
                     }

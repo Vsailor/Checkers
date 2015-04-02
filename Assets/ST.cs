@@ -24,8 +24,8 @@ public class ST : MonoBehaviour {
 	void Start () {
         Music = true;
         Sounds = true;
-        LeftBottomCorner = new Vector2(-47.1f, -2.8f);
-        RightTopCorner = new Vector2(-41.44f, 2.83f);
+        LeftBottomCorner = new Vector2(-42.88f, -2.83f);
+        RightTopCorner = new Vector2(-37.21f, 2.83f);
         GameMenuOpened = false;
         MenuGameMove = 0;
         Language = System.Convert.ToBoolean(File.ReadAllText("Lang.cfg"));

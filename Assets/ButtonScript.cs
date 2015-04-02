@@ -4,9 +4,7 @@ using System.IO;
 
 public class ButtonScript : MonoBehaviour
 {
-    public GameObject MainBackground;
     public GameObject Button;
-    Vector3 OldMainBackgroundPos;
     double Button_x1;
     double Button_x2;
     double Button_y1;
@@ -24,7 +22,6 @@ public class ButtonScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        OldMainBackgroundPos = MainBackground.transform.position;
         CameraMove = 0;
     }
     void Init()
@@ -130,31 +127,17 @@ public class ButtonScript : MonoBehaviour
                 {
                     ST.Instanse.Continue = false;
                     ST.Instanse.StartGame = true;
-                    Camera.main.transform.position = new Vector3(-40.0f, Camera.main.transform.position.y, Camera.main.transform.position.z);
+                    Camera.main.transform.position = new Vector3(-40.04f, Camera.main.transform.position.y, Camera.main.transform.position.z);
                     File.WriteAllText("Save", string.Empty);
                 }
                 if (Button.name == "ResumeGameButton")
                 {
-                    if (Application.loadedLevelName == "Game")
-                    {
-
-                    }
-                    else
-                    {
                         ST.Instanse.Continue = true;
-                        Application.LoadLevel("Game");
-                    }
+      
                 }
                 if (Button.name == "ExitButton")
                 {
-                    if (Application.loadedLevelName == "Cheskers")
-                    {
                         Application.Quit();
-                    }
-                    else
-                    {
-                        Application.LoadLevel("Cheskers");
-                    }
                 }
                 if (Button.name == "SettingsButton")
                 {
@@ -241,41 +224,5 @@ public class ButtonScript : MonoBehaviour
 
         }
 
-        if (Application.loadedLevelName == "Cheskers")
-        {
-
-            if ((CameraMove > 0 && Camera.main.transform.position.x < 26.3) || (CameraMove < 0 && Camera.main.transform.position.x > 0))
-            {
-                Camera.main.transform.position = new Vector3(Camera.main.transform.position.x + CameraMove, Camera.main.transform.position.y, Camera.main.transform.position.z);
-                MainBackground.transform.position = new Vector3(MainBackground.transform.position.x + CameraMove, MainBackground.transform.position.y + Camera.main.transform.position.y, MainBackground.transform.position.z);
-            }
-            else
-            {
-                CameraMove = 0;
-            }
-        }
-
-        if (Application.loadedLevelName == "Game")
-        {
-
-            if (OldMainBackgroundPos.y != MainBackground.transform.position.y)
-            {
-                if (OldMainBackgroundPos.y < MainBackground.transform.position.y)
-                {
-                    CameraMove = 0.4f;
-                }
-                else
-                {
-                    CameraMove = -0.4f;
-                }
-                Button.transform.position = new Vector3(Button.transform.position.x, Button.transform.position.y + CameraMove, Button.transform.position.z);
-            }
-            else
-            {
-                CameraMove = 0;
-            }
-
-            OldMainBackgroundPos = MainBackground.transform.position;
-        }
     }
 }
