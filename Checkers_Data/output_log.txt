@@ -1,0 +1,30 @@
+Initialize engine version: 5.0.0f4 (5b98b70ebeb9)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA GeForce 710M       (ID=0x1140)
+    Vendor:   NVIDIA
+    VRAM:     1994 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Иван\Documents\Cheskers\Checkers_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Иван\Documents\Cheskers\Checkers_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Иван\Documents\Cheskers\Checkers_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Иван\Documents\Cheskers\Checkers_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\Иван\Documents\Cheskers\Checkers_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\Иван\Documents\Cheskers\Checkers_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+- Completed reload, in  0.074 seconds
+desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
+<RI> Initializing input.
+XInput1_3.dll not found.
+<RI> Input initialized.
+<RI> Initialized touch support.
+Platform assembly: C:\Users\Иван\Documents\Cheskers\Checkers_Data\Managed\System.Core.dll (this message is harmless)
+Level 'Game' (-1) couldn't be loaded because it has not been added to the build settings.
+To add a level to the build settings use the menu File->Build Settings...
+UnityEngine.Application:LoadLevelAsync(String, Int32, Boolean, Boolean)
+UnityEngine.Application:LoadLevel(String) (at C:\buildslave\unity\build\artifacts\generated\common\runtime\UnityEngineApplication.gen.cs:59)
+CameraScript:Update() (at C:\Users\Иван\Documents\Cheskers\Assets\CameraScript.cs:38)
+
+[C:/buildslave/unity/build/Runtime/Misc/Player.cpp line 274] 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineApplication.gen.cs Line: 59)
+
