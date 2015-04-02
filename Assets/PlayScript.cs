@@ -51,13 +51,10 @@ public class PlayScript : MonoBehaviour
 
     // Last checker position
     Vector3 ChosenCheckerOldPos;
-
     Vector2 OldIntCheckerPos;
-    Vector2 NowIntCheckerPos;
 
     // Chosen chesker object
     GameObject ChosenChecker;
-
     // Now matrix coordinates
     int x, y;
     // Old matrix coordinates
@@ -67,9 +64,21 @@ public class PlayScript : MonoBehaviour
 
     void SetRedSignalInCheckerPos(int x, int y)
     {
-        obj = Instantiate(RedSignal);
-        obj.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -0.25f);
-        RedSignals.Add(obj);
+        bool exist = false;
+        foreach (Object o in RedSignals)
+        {
+            obj = (GameObject)o;
+            if (ConvertxToIntCoordinate(obj.transform.position.x) == x && ConvertyToIntCoordinate(obj.transform.position.y) == y)
+            {
+                exist = true;
+            }
+        }
+        if (!exist)
+        {
+            obj = Instantiate(RedSignal);
+            obj.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -0.25f);
+            RedSignals.Add(obj);
+        }
     }
 
     void SetGreenSignalInCheckerPos(int x, int y)
@@ -474,7 +483,6 @@ public class PlayScript : MonoBehaviour
         }
 
     }
-
     //Go to position in the array
     void GoTo(int x, int y)
     {
@@ -493,7 +501,6 @@ public class PlayScript : MonoBehaviour
             }
             MouseClicked = false;
             ChosenChecker.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -1);
-
         }
 
     }
@@ -618,6 +625,7 @@ public class PlayScript : MonoBehaviour
         {
             MultiHit = false;
             WhiteMoveExpectedChange();
+            HideRedSignals();
         }
         FiguresHaveToHit.Clear();
         //Save();
@@ -777,6 +785,22 @@ public class PlayScript : MonoBehaviour
                     MouseClicked = false;
                     return;
                 }*/
+                if (!MultiHit && WhiteMoveExpected && CheckWhiteChecker(x, y))
+                {
+                    TryToChooseChecker(WhiteCheckers);
+                    SetGreenSignalInCheckerPos(x, y);
+                    return;
+                }
+                if (!MultiHit && !WhiteMoveExpected && CheckBlackChecker(x, y))
+                {
+                    TryToChooseChecker(BlackCheckers);
+                    SetGreenSignalInCheckerPos(x, y);
+                    return;
+                }
+                if (MultiHit)
+                {
+                    SetGreenSignalInCheckerPos(ConvertxToIntCoordinate(ChosenChecker.transform.position.x), ConvertyToIntCoordinate(ChosenChecker.transform.position.y));
+                }
 
                 // Chosen cell is empty
                 if (CheckEmptyCell(x, y))
@@ -815,13 +839,13 @@ public class PlayScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (ST.Instanse.GameStarted)
         {
             Init();
             if (!ST.Instanse.GameMenuOpened)
             {
                 Playing();
+                
             }
         }
         if (ST.Instanse.StartGame)
