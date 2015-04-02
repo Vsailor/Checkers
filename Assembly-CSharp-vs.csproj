@@ -46,11 +46,8 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\ArrowGameScript.cs" />
      <Compile Include="Assets\ButtonScript.cs" />
-     <Compile Include="Assets\ContinueGameScript.cs" />
      <Compile Include="Assets\GameButtonScript.cs" />
-     <Compile Include="Assets\GameSquareScript.cs" />
      <Compile Include="Assets\PlayScript.cs" />
      <Compile Include="Assets\ST.cs" />
  <Reference Include="UnityEngine.UI">

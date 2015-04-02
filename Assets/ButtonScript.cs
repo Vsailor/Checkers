@@ -4,6 +4,7 @@ using System.IO;
 
 public class ButtonScript : MonoBehaviour
 {
+    public GameObject MainBackground;
     public GameObject Button;
     double Button_x1;
     double Button_x2;
@@ -110,17 +111,7 @@ public class ButtonScript : MonoBehaviour
         if (MousePos.x > Button_x1 && MousePos.x < Button_x2 &&
             MousePos.y > Button_y1 && MousePos.y < Button_y2)
         {
-            if (Language && (Button.name != "MusicButton" || Button.name != "SoundsButton"))
-            {
-                Button.GetComponent<Renderer>().material.mainTexture = EnLightTexture;
-            }
-            else
-            {
-                if (Button.name != "MusicButton" || Button.name != "SoundsButton")
-                {
-                    Button.GetComponent<Renderer>().material.mainTexture = UALightTexture;
-                }
-            }
+            
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 if (Button.name == "NewGameButton")
@@ -220,8 +211,20 @@ public class ButtonScript : MonoBehaviour
                         }
                     }
                 }
+
+
             }
 
+        }
+
+        if ((CameraMove > 0 && Camera.main.transform.position.x < 26.3) || (CameraMove < 0 && Camera.main.transform.position.x > 0))
+        {
+            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x + CameraMove, Camera.main.transform.position.y, Camera.main.transform.position.z);
+            MainBackground.transform.position = new Vector3(MainBackground.transform.position.x + CameraMove, MainBackground.transform.position.y + Camera.main.transform.position.y, MainBackground.transform.position.z);
+        }
+        else
+        {
+            CameraMove = 0;
         }
 
     }
