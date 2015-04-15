@@ -220,7 +220,7 @@ public class PlayScript : MonoBehaviour
         LeftBottomCorner = ST.Instanse.LeftBottomCorner;
         RightTopCorner = ST.Instanse.RightTopCorner;
 
-        if (ST.Instanse.Continue)
+        if (WhiteCheckers != null || BlackCheckers != null)
         {
             Vector3 v;
             int wc = WhiteCheckers.Count;
@@ -499,14 +499,6 @@ public class PlayScript : MonoBehaviour
         WhiteCheckers = new List<GameObject>();
         BlackCheckers = new List<GameObject>();
         GameObject obj;
-        GameObject instanceWF = Instantiate(WhiteFigure);
-        GameObject instanceBF = Instantiate(BlackFigure);
-        WhiteFigure.transform.position = new Vector3(LeftBottomCorner.x, LeftBottomCorner.y, -1f);
-        BlackFigure.transform.position = new Vector3(RightTopCorner.x, RightTopCorner.y, -1f);
-        WhiteCheckers.Add(WhiteFigure);
-        Array[0, 0] = 1;
-        BlackCheckers.Add(BlackFigure);
-        Array[7, 7] = 2;
         foreach (Point p in wc)
         {
             WhiteMoveExpected = p.WhiteMove;
@@ -524,8 +516,6 @@ public class PlayScript : MonoBehaviour
             Array[ConvertyToIntCoordinate(p.y), ConvertxToIntCoordinate(p.x)] = 2;
             BlackCheckers.Add(obj);
         }
-        WhiteFigure = instanceWF;
-        BlackFigure = instanceBF;
     }
     //Go to position in the array
     void GoTo(int x, int y)
@@ -767,6 +757,16 @@ public class PlayScript : MonoBehaviour
     // General playing method
     void Playing()
     {
+        if (WhiteCheckers.Count == 0)
+        {
+            ST.Instanse.Winner = 0;
+            Save();
+        }
+        if (BlackCheckers.Count == 0)
+        {
+            ST.Instanse.Winner = 1;
+            Save();
+        }
         // White checker choose
         if (WhiteMoveExpected && Click() && !MouseClicked && !MultiHit)
         {

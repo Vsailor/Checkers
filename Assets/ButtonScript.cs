@@ -141,12 +141,16 @@ public class ButtonScript : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
+                if (Button.name == "GameMainMenuButton")
+                {
+                    Camera.main.transform.position = new Vector3(0f, Camera.main.transform.position.y, Camera.main.transform.position.z);
+                }
                 if (Button.name == "NewGameButton")
                 {
                     Camera.main.transform.position = new Vector3(-40.04f, Camera.main.transform.position.y, Camera.main.transform.position.z);
                     ST.Instanse.GameStarted = false;
                     ST.Instanse.StartGame = true;
-                    File.WriteAllText("Save", string.Empty);
+                    ST.Instanse.Winner = -1;
                 }
                 if (Button.name == "ResumeGameButton")
                 {

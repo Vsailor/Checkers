@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\ButtonScript.cs" />
+     <Compile Include="Assets\CongratulationsScript.cs" />
      <Compile Include="Assets\GameButtonScript.cs" />
      <Compile Include="Assets\PauseButtonScript.cs" />
      <Compile Include="Assets\PlayScript.cs" />

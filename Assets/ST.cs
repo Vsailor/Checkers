@@ -3,7 +3,10 @@ using System.Collections;
 using System.IO;
 
 public class ST : MonoBehaviour {
+    // 1 - white, 0 - black, -1 - NoWinner
+    public int Winner;
     public static ST Instanse;
+    // 1 - en, 0 - ua
     public bool Language;
     public bool Music;
     public bool Sounds;
@@ -23,6 +26,7 @@ public class ST : MonoBehaviour {
     public bool GameStarted;
 	// Use this for initialization
 	void Start () {
+        Winner = -1;
         LoadFromSave = false;
         Music = true;
         Sounds = true;
