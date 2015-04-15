@@ -116,14 +116,17 @@ public class ButtonScript : MonoBehaviour
             {
                 if (Button.name == "NewGameButton")
                 {
-                    ST.Instanse.Continue = false;
-                    ST.Instanse.StartGame = true;
                     Camera.main.transform.position = new Vector3(-40.04f, Camera.main.transform.position.y, Camera.main.transform.position.z);
+                    ST.Instanse.GameStarted = false;
+                    ST.Instanse.StartGame = true;
                     File.WriteAllText("Save", string.Empty);
                 }
                 if (Button.name == "ResumeGameButton")
                 {
-                        ST.Instanse.Continue = true;
+                    if (ST.Instanse.GameStarted)
+                    {
+                        Camera.main.transform.position = new Vector3(-40.04f, Camera.main.transform.position.y, Camera.main.transform.position.z);
+                    }
       
                 }
                 if (Button.name == "ExitButton")

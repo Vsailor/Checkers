@@ -102,10 +102,15 @@ public class PlayScript : MonoBehaviour
     }
     void SetCheckersInTheFirstPosition()
     {
+
         if (!ST.Instanse.Continue)
         {
             WhiteMoveExpected = true;
             Array = new int[8, 8];
+            GameObject instanceWF = Instantiate(WhiteFigure);
+            GameObject instanceBF = Instantiate(BlackFigure);
+            WhiteFigure.transform.position = new Vector3(LeftBottomCorner.x, LeftBottomCorner.y, -1f);
+            BlackFigure.transform.position = new Vector3(RightTopCorner.x, RightTopCorner.y, -1f);
             WhiteCheckers.Add(WhiteFigure);
             Array[0, 0] = 1;
             BlackCheckers.Add(BlackFigure);
@@ -141,13 +146,9 @@ public class PlayScript : MonoBehaviour
                 BlackCheckers.Add(obj);
                 Array[5, i * 2 + 1] = 2;
             }
-
+            WhiteFigure = instanceWF;
+            BlackFigure = instanceBF;
             //Save();
-        }
-        else
-        {
-            Load();
-
         }
 
     }
@@ -211,6 +212,31 @@ public class PlayScript : MonoBehaviour
     {
         LeftBottomCorner = ST.Instanse.LeftBottomCorner;
         RightTopCorner = ST.Instanse.RightTopCorner;
+        if (ST.Instanse.Continue)
+        {
+            Vector3 v;
+            int wc = WhiteCheckers.Count;
+            int bc = BlackCheckers.Count;
+            for (int i = wc - 1; i >= 0; i--)
+            {
+                v = WhiteCheckers[i].transform.position;
+                DeleteChecker(ConvertxToIntCoordinate(v.x), ConvertyToIntCoordinate(v.y), false);
+            }
+            for (int i = bc - 1; i >= 0; i--)
+            {
+                v = BlackCheckers[i].transform.position;
+                DeleteChecker(ConvertxToIntCoordinate(v.x), ConvertyToIntCoordinate(v.y), true);
+            }
+            ST.Instanse.Continue = false;
+        }
+        if (RedSignals != null)
+        {
+            HideRedSignals();
+        }
+        if (GreenSignal != null)
+        {
+            HideGreenSignal();
+        }
         WhiteCheckers = new List<GameObject>();
         BlackCheckers = new List<GameObject>();
         MouseClicked = false;
@@ -736,7 +762,7 @@ public class PlayScript : MonoBehaviour
             }
             else
             {
-  
+
                 TryToChooseCheckerToHit();
             }
             return;
@@ -759,7 +785,7 @@ public class PlayScript : MonoBehaviour
         // Checker move
         if (!Click() && MouseClicked)
         {
-            
+
             /*
             MoveCheckerAfterTheCursor();
             return;*/
@@ -842,11 +868,9 @@ public class PlayScript : MonoBehaviour
         if (ST.Instanse.GameStarted)
         {
             Init();
-            if (!ST.Instanse.GameMenuOpened)
-            {
-                Playing();
-                
-            }
+            Playing();
+
+
         }
         if (ST.Instanse.StartGame)
         {
