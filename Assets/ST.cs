@@ -30,7 +30,14 @@ public class ST : MonoBehaviour {
         RightTopCorner = new Vector2(-37.21f, 2.83f);
         GameMenuOpened = false;
         MenuGameMove = 0;
-        Language = System.Convert.ToBoolean(File.ReadAllText("Lang.cfg"));
+        if (File.Exists(Application.persistentDataPath + @"\Lang.cfg"))
+        {
+            Language = System.Convert.ToBoolean(File.ReadAllText(Application.persistentDataPath + @"\Lang.cfg"));
+        }
+        else
+        {
+            Language = true;
+        }
         SpeedMenu = 0;
         ArrowInTheTop = true;
         ArrowIsActive = true;

@@ -191,7 +191,7 @@ public class ButtonScript : MonoBehaviour
                     {
                         ST.Instanse.Language = true;
                     }
-                    File.WriteAllText("Lang.cfg", ST.Instanse.Language.ToString());
+                    File.WriteAllText(Application.persistentDataPath + @"\Lang.cfg", ST.Instanse.Language.ToString());
                 }
                 if (Button.name == "MusicButton")
                 {
