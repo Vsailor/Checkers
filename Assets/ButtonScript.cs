@@ -101,6 +101,33 @@ public class ButtonScript : MonoBehaviour
         {
             ST.Instanse.Music = false;
         }
+        if (Button.name == "ResumeGameButton")
+        {
+            if (!File.Exists(Application.persistentDataPath + @"\Save"))
+            {
+
+                if (Language)
+                {
+                    Button.GetComponent<Renderer>().material.mainTexture = EnDarkTexture;
+                }
+                else
+                {
+                    Button.GetComponent<Renderer>().material.mainTexture = UADarkTexture;
+                }
+            }
+            else
+            {
+                if (Language)
+                {
+                    Button.GetComponent<Renderer>().material.mainTexture = EnLightTexture;
+                }
+                else
+                {
+                    Button.GetComponent<Renderer>().material.mainTexture = UALightTexture;
+                }
+            }
+        }
+
     }
     // Update is called once per frame
     void Update()
@@ -111,7 +138,7 @@ public class ButtonScript : MonoBehaviour
         if (MousePos.x > Button_x1 && MousePos.x < Button_x2 &&
             MousePos.y > Button_y1 && MousePos.y < Button_y2)
         {
-            
+
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 if (Button.name == "NewGameButton")
@@ -127,11 +154,21 @@ public class ButtonScript : MonoBehaviour
                     {
                         Camera.main.transform.position = new Vector3(-40.04f, Camera.main.transform.position.y, Camera.main.transform.position.z);
                     }
-      
+                    else
+                    {
+                        if (File.Exists(Application.persistentDataPath + @"\Save"))
+                        {
+                            ST.Instanse.GameStarted = false;
+                            ST.Instanse.StartGame = true;
+                            Camera.main.transform.position = new Vector3(-40.04f, Camera.main.transform.position.y, Camera.main.transform.position.z);
+                            ST.Instanse.LoadFromSave = true;
+                        }
+                    }
+
                 }
                 if (Button.name == "ExitButton")
                 {
-                        Application.Quit();
+                    Application.Quit();
                 }
                 if (Button.name == "SettingsButton")
                 {

@@ -102,53 +102,60 @@ public class PlayScript : MonoBehaviour
     }
     void SetCheckersInTheFirstPosition()
     {
-
-        if (!ST.Instanse.Continue)
+        if (ST.Instanse.LoadFromSave)
         {
-            WhiteMoveExpected = true;
-            Array = new int[8, 8];
-            GameObject instanceWF = Instantiate(WhiteFigure);
-            GameObject instanceBF = Instantiate(BlackFigure);
-            WhiteFigure.transform.position = new Vector3(LeftBottomCorner.x, LeftBottomCorner.y, -1f);
-            BlackFigure.transform.position = new Vector3(RightTopCorner.x, RightTopCorner.y, -1f);
-            WhiteCheckers.Add(WhiteFigure);
-            Array[0, 0] = 1;
-            BlackCheckers.Add(BlackFigure);
-            Array[7, 7] = 2;
-            for (int i = 0; i < 4; i++)
+            Load();
+            ST.Instanse.LoadFromSave = false;
+        }
+        else
+        {
+            if (!ST.Instanse.Continue)
             {
-
-                if (i != 0)
+                WhiteMoveExpected = true;
+                Array = new int[8, 8];
+                GameObject instanceWF = Instantiate(WhiteFigure);
+                GameObject instanceBF = Instantiate(BlackFigure);
+                WhiteFigure.transform.position = new Vector3(LeftBottomCorner.x, LeftBottomCorner.y, -1f);
+                BlackFigure.transform.position = new Vector3(RightTopCorner.x, RightTopCorner.y, -1f);
+                WhiteCheckers.Add(WhiteFigure);
+                Array[0, 0] = 1;
+                BlackCheckers.Add(BlackFigure);
+                Array[7, 7] = 2;
+                for (int i = 0; i < 4; i++)
                 {
+
+                    if (i != 0)
+                    {
+                        obj = Instantiate(WhiteFigure);
+                        obj.transform.position = new Vector3(WhiteFigure.transform.position.x + DISTANCE * 2 * i, WhiteFigure.transform.position.y, WhiteFigure.transform.position.z);
+                        WhiteCheckers.Add(obj);
+                        Array[0, i * 2] = 1;
+                        obj = Instantiate(BlackFigure);
+                        obj.transform.position = new Vector3(BlackFigure.transform.position.x + DISTANCE * 2 * (-i), BlackFigure.transform.position.y, BlackFigure.transform.position.z);
+                        BlackCheckers.Add(obj);
+                        Array[7, i * 2 - 1] = 2;
+                    }
                     obj = Instantiate(WhiteFigure);
-                    obj.transform.position = new Vector3(WhiteFigure.transform.position.x + DISTANCE * 2 * i, WhiteFigure.transform.position.y, WhiteFigure.transform.position.z);
+                    obj.transform.position = new Vector3(WhiteFigure.transform.position.x + DISTANCE * 2 * i + DISTANCE, WhiteFigure.transform.position.y + DISTANCE, WhiteFigure.transform.position.z);
                     WhiteCheckers.Add(obj);
-                    Array[0, i * 2] = 1;
+                    Array[1, i * 2 + 1] = 1;
+                    obj = Instantiate(WhiteFigure);
+                    obj.transform.position = new Vector3(WhiteFigure.transform.position.x + DISTANCE * 2 * i, WhiteFigure.transform.position.y + DISTANCE * 2, WhiteFigure.transform.position.z);
+                    WhiteCheckers.Add(obj);
+                    Array[2, i * 2] = 1;
                     obj = Instantiate(BlackFigure);
-                    obj.transform.position = new Vector3(BlackFigure.transform.position.x + DISTANCE * 2 * (-i), BlackFigure.transform.position.y, BlackFigure.transform.position.z);
+                    obj.transform.position = new Vector3(BlackFigure.transform.position.x + DISTANCE * 2 * (-i) - DISTANCE, BlackFigure.transform.position.y - DISTANCE, BlackFigure.transform.position.z);
                     BlackCheckers.Add(obj);
-                    Array[7, i * 2 - 1] = 2;
+                    Array[6, i * 2] = 2;
+                    obj = Instantiate(BlackFigure);
+                    obj.transform.position = new Vector3(BlackFigure.transform.position.x + DISTANCE * 2 * (-i), BlackFigure.transform.position.y - DISTANCE * 2, BlackFigure.transform.position.z);
+                    BlackCheckers.Add(obj);
+                    Array[5, i * 2 + 1] = 2;
                 }
-                obj = Instantiate(WhiteFigure);
-                obj.transform.position = new Vector3(WhiteFigure.transform.position.x + DISTANCE * 2 * i + DISTANCE, WhiteFigure.transform.position.y + DISTANCE, WhiteFigure.transform.position.z);
-                WhiteCheckers.Add(obj);
-                Array[1, i * 2 + 1] = 1;
-                obj = Instantiate(WhiteFigure);
-                obj.transform.position = new Vector3(WhiteFigure.transform.position.x + DISTANCE * 2 * i, WhiteFigure.transform.position.y + DISTANCE * 2, WhiteFigure.transform.position.z);
-                WhiteCheckers.Add(obj);
-                Array[2, i * 2] = 1;
-                obj = Instantiate(BlackFigure);
-                obj.transform.position = new Vector3(BlackFigure.transform.position.x + DISTANCE * 2 * (-i) - DISTANCE, BlackFigure.transform.position.y - DISTANCE, BlackFigure.transform.position.z);
-                BlackCheckers.Add(obj);
-                Array[6, i * 2] = 2;
-                obj = Instantiate(BlackFigure);
-                obj.transform.position = new Vector3(BlackFigure.transform.position.x + DISTANCE * 2 * (-i), BlackFigure.transform.position.y - DISTANCE * 2, BlackFigure.transform.position.z);
-                BlackCheckers.Add(obj);
-                Array[5, i * 2 + 1] = 2;
+                WhiteFigure = instanceWF;
+                BlackFigure = instanceBF;
+                Save();
             }
-            WhiteFigure = instanceWF;
-            BlackFigure = instanceBF;
-            //Save();
         }
 
     }
@@ -212,6 +219,7 @@ public class PlayScript : MonoBehaviour
     {
         LeftBottomCorner = ST.Instanse.LeftBottomCorner;
         RightTopCorner = ST.Instanse.RightTopCorner;
+
         if (ST.Instanse.Continue)
         {
             Vector3 v;
@@ -233,6 +241,7 @@ public class PlayScript : MonoBehaviour
         {
             HideRedSignals();
         }
+
         if (GreenSignal != null)
         {
             HideGreenSignal();
@@ -438,7 +447,7 @@ public class PlayScript : MonoBehaviour
             p.WhiteMove = WhiteMoveExpected;
             bc.Add(p);
         }
-        using (var fStream = new FileStream(System.Environment.CurrentDirectory + @"\Save", FileMode.Create, FileAccess.Write, FileShare.None))
+        using (var fStream = new FileStream(Application.persistentDataPath + @"\Save", FileMode.Create, FileAccess.Write, FileShare.None))
         {
             formatter.Serialize(fStream, wc);
             formatter.Serialize(fStream, bc);
@@ -482,7 +491,7 @@ public class PlayScript : MonoBehaviour
         List<Point> wc;
         List<Point> bc;
 
-        using (FileStream inStr = new FileStream(System.Environment.CurrentDirectory + @"\Save", FileMode.Open))
+        using (FileStream inStr = new FileStream(Application.persistentDataPath + @"\Save", FileMode.Open))
         {
             wc = formatter.Deserialize(inStr) as List<Point>;
             bc = formatter.Deserialize(inStr) as List<Point>;
@@ -490,6 +499,14 @@ public class PlayScript : MonoBehaviour
         WhiteCheckers = new List<GameObject>();
         BlackCheckers = new List<GameObject>();
         GameObject obj;
+        GameObject instanceWF = Instantiate(WhiteFigure);
+        GameObject instanceBF = Instantiate(BlackFigure);
+        WhiteFigure.transform.position = new Vector3(LeftBottomCorner.x, LeftBottomCorner.y, -1f);
+        BlackFigure.transform.position = new Vector3(RightTopCorner.x, RightTopCorner.y, -1f);
+        WhiteCheckers.Add(WhiteFigure);
+        Array[0, 0] = 1;
+        BlackCheckers.Add(BlackFigure);
+        Array[7, 7] = 2;
         foreach (Point p in wc)
         {
             WhiteMoveExpected = p.WhiteMove;
@@ -507,7 +524,8 @@ public class PlayScript : MonoBehaviour
             Array[ConvertyToIntCoordinate(p.y), ConvertxToIntCoordinate(p.x)] = 2;
             BlackCheckers.Add(obj);
         }
-
+        WhiteFigure = instanceWF;
+        BlackFigure = instanceBF;
     }
     //Go to position in the array
     void GoTo(int x, int y)
@@ -654,7 +672,7 @@ public class PlayScript : MonoBehaviour
             HideRedSignals();
         }
         FiguresHaveToHit.Clear();
-        //Save();
+        Save();
     }
 
     bool FindFigureToHit(int x, int y, List<GameObject> figures)
@@ -839,7 +857,7 @@ public class PlayScript : MonoBehaviour
                         {
                             GoTo(x, y);
                             WhiteMoveExpectedChange();
-                            //Save();
+                            Save();
                             return;
                         }
                     }

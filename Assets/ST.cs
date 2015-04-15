@@ -8,6 +8,7 @@ public class ST : MonoBehaviour {
     public bool Music;
     public bool Sounds;
     public bool Continue;
+    public bool LoadFromSave;
     public Vector2 LeftBottomCorner;
     public Vector2 RightTopCorner;
     public bool GameMenuOpened;
@@ -22,6 +23,7 @@ public class ST : MonoBehaviour {
     public bool GameStarted;
 	// Use this for initialization
 	void Start () {
+        LoadFromSave = false;
         Music = true;
         Sounds = true;
         LeftBottomCorner = new Vector2(-42.88f, -2.83f);
