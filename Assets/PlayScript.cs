@@ -7,11 +7,12 @@ using System.Runtime.Serialization;
 
 public class PlayScript : MonoBehaviour
 {
-    // Left bottom white figure
     public GameObject WhiteFigure;
 
-    // Right top black figure
     public GameObject BlackFigure;
+
+    public GameObject WhiteQueen;
+    public GameObject BlackQueen;
 
     List<GameObject> FiguresHaveToHit;
     public bool IsHaveToHit;
@@ -25,7 +26,8 @@ public class PlayScript : MonoBehaviour
     // All figures
     List<GameObject> WhiteCheckers;
     List<GameObject> BlackCheckers;
-
+    List<GameObject> WhiteQueens;
+    List<GameObject> BlackQueens;
     // Mouse position in the screen coordinates
     Vector3 MousePos;
 
@@ -246,6 +248,8 @@ public class PlayScript : MonoBehaviour
         {
             HideGreenSignal();
         }
+        WhiteQueens = new List<GameObject>();
+        BlackQueens = new List<GameObject>();
         WhiteCheckers = new List<GameObject>();
         BlackCheckers = new List<GameObject>();
         MouseClicked = false;
@@ -260,6 +264,7 @@ public class PlayScript : MonoBehaviour
         FiguresHaveToHit = new List<GameObject>();
         RedSignals = new List<GameObject>();
     }
+
 
     /// <summary>
     /// Checking if we can hit back
@@ -456,6 +461,8 @@ public class PlayScript : MonoBehaviour
     }
 
 
+    
+
     void DebugSave()
     {
         string s;
@@ -517,6 +524,72 @@ public class PlayScript : MonoBehaviour
             BlackCheckers.Add(obj);
         }
     }
+    void TryToGetQueen(int x, int y)
+    {
+        if (CheckEmptyCell(x, y) && WhiteMoveExpected)
+        {
+            if (y == 7)
+            {
+                GameObject obj = Instantiate(WhiteQueen);
+                obj.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -2);
+                WhiteQueens.Add(obj);
+            }
+        }
+        if (CheckEmptyCell(x, y) && !WhiteMoveExpected)
+        {
+            if (y == 0)
+            {
+                GameObject obj = Instantiate(BlackQueen);
+                obj.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -2);
+                BlackQueens.Add(obj);
+            }
+        }
+    }
+
+    bool IsQueen(GameObject obj)
+    {
+        
+        foreach (var o in WhiteQueens)
+        {
+            if (ConvertxToIntCoordinate(obj.transform.position.x) == ConvertxToIntCoordinate(o.transform.position.x)
+                &&
+                ConvertyToIntCoordinate(obj.transform.position.y) == ConvertyToIntCoordinate(o.transform.position.y))
+            {
+                return true;
+            }
+        }
+        foreach (var o in BlackQueens)
+        {
+            if (ConvertxToIntCoordinate(obj.transform.position.x) == ConvertxToIntCoordinate(o.transform.position.x)
+                &&
+                ConvertyToIntCoordinate(obj.transform.position.y) == ConvertyToIntCoordinate(o.transform.position.y))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    void TransformQueenPos(GameObject checker, Vector3 setTo)
+    {
+        foreach (var o in WhiteQueens)
+        {
+            if (ConvertxToIntCoordinate(checker.transform.position.x) == ConvertxToIntCoordinate(o.transform.position.x)
+                &&
+                ConvertyToIntCoordinate(checker.transform.position.y) == ConvertyToIntCoordinate(o.transform.position.y))
+            {
+                o.transform.position = setTo;
+            }
+        }
+        foreach (var o in BlackQueens)
+        {
+            if (ConvertxToIntCoordinate(checker.transform.position.x) == ConvertxToIntCoordinate(o.transform.position.x)
+                &&
+                ConvertyToIntCoordinate(checker.transform.position.y) == ConvertyToIntCoordinate(o.transform.position.y))
+            {
+                o.transform.position = setTo;
+            }
+        }
+    }
     //Go to position in the array
     void GoTo(int x, int y)
     {
@@ -524,6 +597,7 @@ public class PlayScript : MonoBehaviour
 
         if (MouseClicked && Array[y, x] == 0)
         {
+            TryToGetQueen(x,y);
             Array[ConvertyToIntCoordinate(ChosenCheckerOldPos.y), ConvertxToIntCoordinate(ChosenCheckerOldPos.x)] = 0;
             if (WhiteMoveExpected)
             {
@@ -534,7 +608,18 @@ public class PlayScript : MonoBehaviour
                 Array[y, x] = 2;
             }
             MouseClicked = false;
-            ChosenChecker.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -1);
+            if (IsQueen(ChosenChecker))
+            {
+                TransformQueenPos(ChosenChecker, new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -2));
+                ChosenChecker.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -1);
+
+            }
+            else
+            {
+                ChosenChecker.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -1);
+            }
+
+
         }
 
     }
