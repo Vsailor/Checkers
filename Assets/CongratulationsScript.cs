@@ -17,31 +17,31 @@ public class CongratulationsScript : MonoBehaviour {
         if (ST.Instanse.Winner != -1 && Camera.main.transform.position.x == -40.04f)
         {
             ST.Instanse.GameStarted = false;
-            this.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, -1.5f);
+            this.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, -3f);
             switch (ST.Instanse.Winner)
             {
                 case 0:
                     if (ST.Instanse.Language)
                     {
-                        BlackEN.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + 1f, -2f);
+                        BlackEN.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + 1f, -4f);
                     }
                     else
                     {
-                        BlackUA.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + 1f, -2f);
+                        BlackUA.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + 1f, -4f);
                     }
                     break;
                 case 1:
                     if (ST.Instanse.Language)
                     {
-                        WhiteEN.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + 1f, -2f);
+                        WhiteEN.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + 1f, -4f);
                     }
                     else
                     {
-                        WhiteUA.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + 1f, -2f);
+                        WhiteUA.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + 1f, -4f);
                     }
                     break;
             }
-            GameMainMenuButton.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y-4.5f, -2f);
+            GameMainMenuButton.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y-4.5f, -4f);
         }
         else
         {

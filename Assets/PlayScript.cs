@@ -222,21 +222,29 @@ public class PlayScript : MonoBehaviour
         LeftBottomCorner = ST.Instanse.LeftBottomCorner;
         RightTopCorner = ST.Instanse.RightTopCorner;
 
-        if (WhiteCheckers != null || BlackCheckers != null)
+        if (WhiteCheckers != null || BlackCheckers != null || WhiteQueens !=null || BlackQueens != null)
         {
             Vector3 v;
-            int wc = WhiteCheckers.Count;
-            int bc = BlackCheckers.Count;
-            for (int i = wc - 1; i >= 0; i--)
+            if (WhiteCheckers != null)
             {
-                v = WhiteCheckers[i].transform.position;
-                DeleteChecker(ConvertxToIntCoordinate(v.x), ConvertyToIntCoordinate(v.y), false);
+                int wc = WhiteCheckers.Count;
+                for (int i = wc - 1; i >= 0; i--)
+                {
+                    v = WhiteCheckers[i].transform.position;
+                    DeleteChecker(ConvertxToIntCoordinate(v.x), ConvertyToIntCoordinate(v.y), false);
+                }
             }
-            for (int i = bc - 1; i >= 0; i--)
+            if (BlackCheckers != null)
             {
-                v = BlackCheckers[i].transform.position;
-                DeleteChecker(ConvertxToIntCoordinate(v.x), ConvertyToIntCoordinate(v.y), true);
+                int bc = BlackCheckers.Count;
+                for (int i = bc - 1; i >= 0; i--)
+                {
+                    v = BlackCheckers[i].transform.position;
+                    DeleteChecker(ConvertxToIntCoordinate(v.x), ConvertyToIntCoordinate(v.y), true);
+                }
             }
+
+
             ST.Instanse.Continue = false;
         }
         if (RedSignals != null)
@@ -252,6 +260,7 @@ public class PlayScript : MonoBehaviour
         BlackQueens = new List<GameObject>();
         WhiteCheckers = new List<GameObject>();
         BlackCheckers = new List<GameObject>();
+
         MouseClicked = false;
         MultiHit = false;
         IsHaveToHit = false;
@@ -401,8 +410,17 @@ public class PlayScript : MonoBehaviour
                 {
                     Array[y, x] = 0;
                     BlackCheckers.RemoveAt(i);
+                    GameObject o;
+                    for (int j = 0; j < BlackQueens.Count; j++)
+                    {
+                        o = BlackQueens[j];
+                        if (x == ConvertxToIntCoordinate(o.transform.position.x) && y == ConvertyToIntCoordinate(o.transform.position.y))
+                        {
+                            BlackQueens.RemoveAt(j);
+                            Destroy(o);
+                        }
+                    }
                     Destroy(obj);
-
                 }
             }
         }
@@ -415,6 +433,16 @@ public class PlayScript : MonoBehaviour
                 {
                     Array[y, x] = 0;
                     WhiteCheckers.RemoveAt(i);
+                    GameObject o;
+                    for (int j = 0; j < WhiteQueens.Count; j++)
+                    {
+                        o = WhiteQueens[j];
+                        if (x == ConvertxToIntCoordinate(o.transform.position.x) && y == ConvertyToIntCoordinate(o.transform.position.y))
+                        {
+                            WhiteQueens.RemoveAt(j);
+                            Destroy(o);
+                        }
+                    }
                     Destroy(obj);
                 }
             }
@@ -433,7 +461,8 @@ public class PlayScript : MonoBehaviour
         BinaryFormatter formatter = new BinaryFormatter();
         List<Point> wc = new List<Point>();
         List<Point> bc = new List<Point>();
-
+        List<Point> wq = new List<Point>();
+        List<Point> bq = new List<Point>();
         Point p;
 
         foreach (Object o in WhiteCheckers)
@@ -452,10 +481,28 @@ public class PlayScript : MonoBehaviour
             p.WhiteMove = WhiteMoveExpected;
             bc.Add(p);
         }
+        foreach (Object o in WhiteQueens)
+        {
+            obj = o as GameObject;
+            p.x = obj.transform.position.x;
+            p.y = obj.transform.position.y;
+            p.WhiteMove = WhiteMoveExpected;
+            wq.Add(p);
+        }
+        foreach (Object o in BlackQueens)
+        {
+            obj = o as GameObject;
+            p.x = obj.transform.position.x;
+            p.y = obj.transform.position.y;
+            p.WhiteMove = WhiteMoveExpected;
+            bq.Add(p);
+        }
         using (var fStream = new FileStream(Application.persistentDataPath + @"\Save", FileMode.Create, FileAccess.Write, FileShare.None))
         {
             formatter.Serialize(fStream, wc);
             formatter.Serialize(fStream, bc);
+            formatter.Serialize(fStream, wq);
+            formatter.Serialize(fStream, bq);
         }
 
     }
@@ -497,14 +544,20 @@ public class PlayScript : MonoBehaviour
         BinaryFormatter formatter = new BinaryFormatter();
         List<Point> wc;
         List<Point> bc;
+        List<Point> wq;
+        List<Point> bq;
 
         using (FileStream inStr = new FileStream(Application.persistentDataPath + @"\Save", FileMode.Open))
         {
             wc = formatter.Deserialize(inStr) as List<Point>;
             bc = formatter.Deserialize(inStr) as List<Point>;
+            wq = formatter.Deserialize(inStr) as List<Point>;
+            bq = formatter.Deserialize(inStr) as List<Point>;
         }
         WhiteCheckers = new List<GameObject>();
         BlackCheckers = new List<GameObject>();
+        WhiteQueens = new List<GameObject>();
+        BlackQueens = new List<GameObject>();
         GameObject obj;
         foreach (Point p in wc)
         {
@@ -522,6 +575,18 @@ public class PlayScript : MonoBehaviour
             obj.transform.position = new Vector3(p.x, p.y, -1);
             Array[ConvertyToIntCoordinate(p.y), ConvertxToIntCoordinate(p.x)] = 2;
             BlackCheckers.Add(obj);
+        }
+        foreach (Point p in wq)
+        {
+            obj = Instantiate(WhiteQueen);
+            obj.transform.position = new Vector3(p.x, p.y, -2);
+            WhiteQueens.Add(obj);
+        }
+        foreach (Point p in bq)
+        {
+            obj = Instantiate(BlackQueen);
+            obj.transform.position = new Vector3(p.x, p.y, -2);
+            BlackQueens.Add(obj);
         }
     }
     void TryToGetQueen(int x, int y)
@@ -842,12 +907,12 @@ public class PlayScript : MonoBehaviour
     // General playing method
     void Playing()
     {
-        if (WhiteCheckers.Count == 0)
+        if (WhiteCheckers.Count == 0 && WhiteQueens.Count == 0)
         {
             ST.Instanse.Winner = 0;
             Save();
         }
-        if (BlackCheckers.Count == 0)
+        if (BlackCheckers.Count == 0 && BlackQueens.Count == 0)
         {
             ST.Instanse.Winner = 1;
             Save();
@@ -906,14 +971,6 @@ public class PlayScript : MonoBehaviour
                 x = ConvertxToIntCoordinate(MousePos.x);
                 y = ConvertyToIntCoordinate(MousePos.y);
 
-                // Maked a mistake with checker setting
-                /*
-                if (!MultiHit && x == old_x && y == old_y)
-                {
-                    ChosenChecker.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -1);
-                    MouseClicked = false;
-                    return;
-                }*/
                 if (!MultiHit && WhiteMoveExpected && CheckWhiteChecker(x, y))
                 {
                     TryToChooseChecker(WhiteCheckers);
