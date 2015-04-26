@@ -222,7 +222,7 @@ public class PlayScript : MonoBehaviour
         LeftBottomCorner = ST.Instanse.LeftBottomCorner;
         RightTopCorner = ST.Instanse.RightTopCorner;
 
-        if (WhiteCheckers != null || BlackCheckers != null || WhiteQueens !=null || BlackQueens != null)
+        if (WhiteCheckers != null || BlackCheckers != null || WhiteQueens != null || BlackQueens != null)
         {
             Vector3 v;
             if (WhiteCheckers != null)
@@ -243,7 +243,22 @@ public class PlayScript : MonoBehaviour
                     DeleteChecker(ConvertxToIntCoordinate(v.x), ConvertyToIntCoordinate(v.y), true);
                 }
             }
-
+            if (WhiteQueens != null)
+            {
+                for (int i = 0; i < WhiteQueens.Count; i++)
+                {
+                    Destroy(WhiteQueens[i]);
+                }
+                WhiteQueens.Clear();
+            }
+            if (BlackQueens != null)
+            {
+                for (int i = 0; i < BlackQueens.Count; i++)
+                {
+                    Destroy(BlackQueens[i]);
+                }
+                BlackQueens.Clear();
+            }
 
             ST.Instanse.Continue = false;
         }
@@ -360,7 +375,7 @@ public class PlayScript : MonoBehaviour
                     return true;
                 }
             }
-            
+
         }
         else
         {
@@ -594,7 +609,7 @@ public class PlayScript : MonoBehaviour
     }
 
 
-    
+
 
     void DebugSave()
     {
@@ -703,7 +718,7 @@ public class PlayScript : MonoBehaviour
 
     bool IsQueen(GameObject obj)
     {
-        
+
         foreach (var o in WhiteQueens)
         {
             if (ConvertxToIntCoordinate(obj.transform.position.x) == ConvertxToIntCoordinate(o.transform.position.x)
@@ -752,7 +767,7 @@ public class PlayScript : MonoBehaviour
 
         if (MouseClicked && Array[y, x] == 0)
         {
-            TryToGetQueen(x,y);
+            TryToGetQueen(x, y);
             Array[ConvertyToIntCoordinate(ChosenCheckerOldPos.y), ConvertxToIntCoordinate(ChosenCheckerOldPos.x)] = 0;
             if (WhiteMoveExpected)
             {
@@ -921,8 +936,8 @@ public class PlayScript : MonoBehaviour
     bool TryHit()
     {
         if ((x - old_x == 2) &&
-           ((WhiteMoveExpected && CheckWhiteChecker(x - 2, y + 2) && CheckBlackChecker(x - 1, y + 1)) ||
-           (!WhiteMoveExpected && CheckBlackChecker(x - 2, y + 2) && CheckWhiteChecker(x - 1, y + 1))))
+             ((WhiteMoveExpected && CheckWhiteChecker(x - 2, y + 2) && CheckBlackChecker(x - 1, y + 1)) ||
+             (!WhiteMoveExpected && CheckBlackChecker(x - 2, y + 2) && CheckWhiteChecker(x - 1, y + 1))))
         {
             Hit(x - 1, y + 1);
             return true;
@@ -949,6 +964,103 @@ public class PlayScript : MonoBehaviour
             Hit(x + 1, y - 1);
             return true;
         }
+        if (ChosenQueen())
+        {
+            x = ConvertxToIntCoordinate(ChosenChecker.transform.position.x);
+            y = ConvertyToIntCoordinate(ChosenChecker.transform.position.y);
+            int qx = x;
+            int qy = y;
+
+            for (int i = 1; x + i < 8 && y + i < 8; i++)
+            {
+                qx = x + i;
+                qy = y + i;
+                if (CheckEmptyCell(qx, qy))
+                {
+                    if (((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))) 
+                        && qx+2 == ConvertxToIntCoordinate(MousePos.x) && qy+2 == ConvertyToIntCoordinate(MousePos.y))
+                    {
+                        this.x = qx+2;
+                        this.y = qy+2;
+                        Hit(qx + 1, qy + 1);
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = 1; x - i >= 0 && y - i >= 0; i--)
+            {
+                qx = x - i;
+                qy = y - i;
+                if (CheckEmptyCell(qx, qy))
+                {
+                    if (((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2)))
+                        && qx - 2  == ConvertxToIntCoordinate(MousePos.x) && qy-2 == ConvertyToIntCoordinate(MousePos.y))
+                    {
+                        this.x = qx-2;
+                        this.y = qy-2;
+                        Hit(qx - 1, qy - 1);
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = 1; x + i < 8 && y - i >= 0; i++)
+            {
+                qx = x + i;
+                qy = y - i;
+                if (CheckEmptyCell(qx, qy))
+                {
+                    if (((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2)))
+                        && qx + 2 == ConvertxToIntCoordinate(MousePos.x) && qy - 2 == ConvertyToIntCoordinate(MousePos.y))
+                    {
+                        this.x = qx+2;
+                        this.y = qy-2;
+                        Hit(qx + 1, qy - 1);
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = 1; x - i >= 0 && y + i < 8; i++)
+            {
+                qx = x - i;
+                qy = y + i;
+                if (CheckEmptyCell(qx, qy))
+                {
+                    if (((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2)))
+                        && qx - 2 == ConvertxToIntCoordinate(MousePos.x) && qy + 2 == ConvertyToIntCoordinate(MousePos.y))
+                    { 
+                        this.x = qx-2;
+                        this.y = qy+2;
+                        Hit(qx - 1, qy + 1);
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        else
+        {
+          
+        }
+
         return false;
     }
 
@@ -1024,6 +1136,82 @@ public class PlayScript : MonoBehaviour
         if (Mathf.Abs(ConvertxToIntCoordinate(ChosenChecker.transform.position.x) - x) == Mathf.Abs(ConvertyToIntCoordinate(ChosenChecker.transform.position.y) - y))
         {
             return true;
+        }
+        return false;
+    }
+
+    bool TryToGoQueen(int x, int y)
+    {
+        int qx = ConvertxToIntCoordinate(ChosenChecker.transform.position.x);
+        int qy = ConvertyToIntCoordinate(ChosenChecker.transform.position.y);
+        if (x < qx && y < qy)
+        {
+
+            for (int i = qx-1, j = qy-1; i >= x && j >= y; i--, j--)
+            {
+                if (i == x && j == y)
+                {
+                    GoTo(x, y);
+                    WhiteMoveExpectedChange();
+                    return true;
+                }
+                if (!CheckEmptyCell(i, j))
+                {
+                    break;
+                }
+  
+            }
+        }
+        if (x > qx && y < qy)
+        {
+            for (int i = qx+1, j = qy-1; i <= x && j >= y; i++, j--)
+            {
+                if (i == x && j == y)
+                {
+                    GoTo(x, y);
+                    WhiteMoveExpectedChange();
+                    return true;
+                }
+                if (!CheckEmptyCell(i, j))
+                {
+                    break;
+                }
+
+            }
+        }
+        if (x < qx && y > qy)
+        {
+            for (int i = qx-1, j = qy+1; i >= x && j <= y; i--, j++)
+            {
+                if (i == x && j == y)
+                {
+                    GoTo(x, y);
+                    WhiteMoveExpectedChange();
+                    return true;
+                }
+                if (!CheckEmptyCell(i, j))
+                {
+                    break;
+                }
+
+            }
+        }
+        if (x > qx && y < qy)
+        {
+            for (int i = qx+1, j = qy+1; i <= x && j <= y; i++, j++)
+            {
+                if (i == x && j == y)
+                {
+                    GoTo(x, y);
+                    WhiteMoveExpectedChange();
+                    return true;
+                }
+                if (!CheckEmptyCell(i, j))
+                {
+                    break;
+                }
+
+            }
         }
         return false;
     }
@@ -1129,7 +1317,7 @@ public class PlayScript : MonoBehaviour
                     }
 
 
-                    
+
                     // Hit
                     if (Mathf.Abs(x - old_x) == 2 && Mathf.Abs(y - old_y) == 2)
                     {
@@ -1140,11 +1328,15 @@ public class PlayScript : MonoBehaviour
                     }
                     if (ChosenQueen())
                     {
+
                         if (CanQueenGoTo(x, y))
                         {
-                            GoTo(x, y);
-                            WhiteMoveExpectedChange();
-                            Save();
+                            //GoTo(x, y);
+                            TryToGoQueen(x, y);
+                            if (TryHit())
+                            {
+                                Save();
+                            }
                             return;
                         }
                     }
