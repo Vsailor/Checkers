@@ -62,7 +62,7 @@ public class PlayScript : MonoBehaviour
     // Old matrix coordinates
     int old_x;
     int old_y;
-    readonly string DebugFileName = System.DateTime.Now.Day.ToString() + "_" + System.DateTime.Now.Month.ToString() + "_" + System.DateTime.Now.Year.ToString() + "_" + System.DateTime.Now.Hour.ToString() + "_" + System.DateTime.Now.Minute.ToString() + "_" + System.DateTime.Now.Second.ToString();
+    string DebugFileName;
 
     void SetRedSignalInCheckerPos(int x, int y)
     {
@@ -360,8 +360,7 @@ public class PlayScript : MonoBehaviour
                     return true;
                 }
             }
-
-            return false;
+            
         }
         else
         {
@@ -393,8 +392,95 @@ public class PlayScript : MonoBehaviour
                     return true;
                 }
             }
-            return false;
         }
+
+
+        if (ChosenQueen())
+        {
+            int qx = x;
+            int qy = y;
+            for (int i = 1; x + i < 8 && y + i < 8; i++)
+            {
+                qx = x + i;
+                qy = y + i;
+                if (CheckEmptyCell(qx, qy))
+                {
+                    if (WhiteMoveExpected && CheckBlackChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))
+                    {
+                        return true;
+                    }
+                    if (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = 1; x - i >= 0 && y - i >= 0; i--)
+            {
+                qx = x - i;
+                qy = y - i;
+                if (CheckEmptyCell(qx, qy))
+                {
+                    if (WhiteMoveExpected && CheckBlackChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2))
+                    {
+                        return true;
+                    }
+                    if (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = 1; x + i < 8 && y - i >= 0; i++)
+            {
+                qx = x + i;
+                qy = y - i;
+                if (CheckEmptyCell(qx, qy))
+                {
+                    if (WhiteMoveExpected && CheckBlackChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2))
+                    {
+                        return true;
+                    }
+                    if (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = 1; x - i >= 0 && y + i < 8; i++)
+            {
+                qx = x - i;
+                qy = y + i;
+                if (CheckEmptyCell(qx, qy))
+                {
+                    if (WhiteMoveExpected && CheckBlackChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2))
+                    {
+                        return true;
+                    }
+                    if (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        return false;
     }
 
     // x,y in matrix coordinates, white - 1, black = 0
@@ -513,6 +599,10 @@ public class PlayScript : MonoBehaviour
     void DebugSave()
     {
         string s;
+        if (!File.Exists(Application.persistentDataPath + DebugFileName + ".log"))
+        {
+            (new FileStream(Application.persistentDataPath + DebugFileName + ".log", FileMode.Create, FileAccess.Write, FileShare.None)).Close();
+        }
         for (int i = SIZE_OF_MATRIX - 1; i >= 0; i--)
         {
             s = string.Empty;
@@ -531,9 +621,9 @@ public class PlayScript : MonoBehaviour
                     s += "-";
                 }
             }
-            File.AppendAllText(System.Environment.CurrentDirectory + @"\DebugSave\" + DebugFileName + ".log", s + System.Environment.NewLine);
+            File.AppendAllText(Application.persistentDataPath + DebugFileName + ".log", s + System.Environment.NewLine);
         }
-        File.AppendAllText(System.Environment.CurrentDirectory + @"\DebugSave\" + DebugFileName + ".log", "----------------------------" + System.Environment.NewLine);
+        File.AppendAllText(Application.persistentDataPath + DebugFileName + ".log", "----------------------------" + System.Environment.NewLine);
 
     }
 
@@ -904,6 +994,40 @@ public class PlayScript : MonoBehaviour
         }
     }
 
+    bool ChosenQueen()
+    {
+        if (WhiteMoveExpected)
+        {
+            foreach (var o in WhiteQueens)
+            {
+                if (o.transform.position.x == ChosenChecker.transform.position.x && o.transform.position.y == ChosenChecker.transform.position.y)
+                {
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            foreach (var o in BlackQueens)
+            {
+                if (o.transform.position.x == ChosenChecker.transform.position.x && o.transform.position.y == ChosenChecker.transform.position.y)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool CanQueenGoTo(int x, int y)
+    {
+        if (Mathf.Abs(ConvertxToIntCoordinate(ChosenChecker.transform.position.x) - x) == Mathf.Abs(ConvertyToIntCoordinate(ChosenChecker.transform.position.y) - y))
+        {
+            return true;
+        }
+        return false;
+    }
+
     // General playing method
     void Playing()
     {
@@ -1003,11 +1127,24 @@ public class PlayScript : MonoBehaviour
                             return;
                         }
                     }
+
+
+                    
                     // Hit
                     if (Mathf.Abs(x - old_x) == 2 && Mathf.Abs(y - old_y) == 2)
                     {
                         if (TryHit())
                         {
+                            return;
+                        }
+                    }
+                    if (ChosenQueen())
+                    {
+                        if (CanQueenGoTo(x, y))
+                        {
+                            GoTo(x, y);
+                            WhiteMoveExpectedChange();
+                            Save();
                             return;
                         }
                     }
