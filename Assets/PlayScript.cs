@@ -63,6 +63,9 @@ public class PlayScript : MonoBehaviour
     int old_x;
     int old_y;
     string DebugFileName;
+    
+    List<GameObject> BlackCheckersKilled;
+    List<GameObject> WhiteCheckersKilled;
 
     void SetRedSignalInCheckerPos(int x, int y)
     {
@@ -262,6 +265,9 @@ public class PlayScript : MonoBehaviour
 
             ST.Instanse.Continue = false;
         }
+
+
+
         if (RedSignals != null)
         {
             HideRedSignals();
@@ -271,11 +277,31 @@ public class PlayScript : MonoBehaviour
         {
             HideGreenSignal();
         }
+
+
+        if (WhiteCheckersKilled != null)
+        {
+            for (int i = 0; i < WhiteCheckersKilled.Count; i++)
+            {
+                Destroy(WhiteCheckersKilled[i]);
+            }
+            WhiteCheckersKilled.Clear();
+        }
+
+        if (BlackCheckersKilled != null)
+        {
+            for (int i = 0; i < BlackCheckersKilled.Count; i++)
+            {
+                Destroy(BlackCheckersKilled[i]);
+            }
+            BlackCheckersKilled.Clear();
+        }
         WhiteQueens = new List<GameObject>();
         BlackQueens = new List<GameObject>();
         WhiteCheckers = new List<GameObject>();
         BlackCheckers = new List<GameObject>();
-
+        WhiteCheckersKilled = new List<GameObject>();
+        BlackCheckersKilled = new List<GameObject>();
         MouseClicked = false;
         MultiHit = false;
         IsHaveToHit = false;
@@ -561,6 +587,13 @@ public class PlayScript : MonoBehaviour
             }
         }
     }
+    [System.Serializable]
+    struct KilledChecker
+    {
+        public float x, y, z;
+        public bool isQueen;
+        public bool color;
+    }
 
     [System.Serializable]
     struct Point
@@ -577,7 +610,40 @@ public class PlayScript : MonoBehaviour
         List<Point> wq = new List<Point>();
         List<Point> bq = new List<Point>();
         Point p;
-
+        KilledChecker k;
+        List<KilledChecker> l = new List<KilledChecker>();
+        foreach (var v in WhiteCheckersKilled)
+        {
+            k.x = v.transform.position.x;
+            k.y = v.transform.position.y;
+            k.z = v.transform.position.z;
+            if (v.name.CompareTo("WhiteQueen") == 1)
+            {
+                k.isQueen = true;
+            }
+            else
+            {
+                k.isQueen = false;
+            }
+            k.color = true;
+            l.Add(k);
+        }
+        foreach (var v in BlackCheckersKilled)
+        {
+            k.x = v.transform.position.x;
+            k.y = v.transform.position.y;
+            k.z = v.transform.position.z;
+            if (v.name.CompareTo("BlackQueen") == 1)
+            {
+                k.isQueen = true;
+            }
+            else
+            {
+                k.isQueen = false;
+            }
+            k.color = false;
+            l.Add(k);
+        }
         foreach (Object o in WhiteCheckers)
         {
             obj = o as GameObject;
@@ -616,6 +682,8 @@ public class PlayScript : MonoBehaviour
             formatter.Serialize(fStream, bc);
             formatter.Serialize(fStream, wq);
             formatter.Serialize(fStream, bq);
+            formatter.Serialize(fStream, l);
+
         }
 
     }
@@ -663,14 +731,43 @@ public class PlayScript : MonoBehaviour
         List<Point> bc;
         List<Point> wq;
         List<Point> bq;
-
+        List<KilledChecker> l;
         using (FileStream inStr = new FileStream(Application.persistentDataPath + @"\Save", FileMode.Open))
         {
             wc = formatter.Deserialize(inStr) as List<Point>;
             bc = formatter.Deserialize(inStr) as List<Point>;
             wq = formatter.Deserialize(inStr) as List<Point>;
             bq = formatter.Deserialize(inStr) as List<Point>;
+            l = formatter.Deserialize(inStr) as List<KilledChecker>;
         }
+        foreach (var v in l)
+        {
+            if (v.color)
+            {
+                if (v.isQueen)
+                {
+                    WhiteCheckersKilled.Add(Instantiate(WhiteQueen));
+                }
+                else
+                {
+                    WhiteCheckersKilled.Add(Instantiate(WhiteFigure));
+                }
+                WhiteCheckersKilled[WhiteCheckersKilled.Count - 1].transform.position = new Vector3(v.x, v.y, v.z);
+            }
+            else
+            {
+                if (v.isQueen)
+                {
+                   BlackCheckersKilled.Add(Instantiate(BlackQueen));
+                }
+                else
+                {
+                    BlackCheckersKilled.Add(Instantiate(BlackFigure));
+                }
+                BlackCheckersKilled[BlackCheckersKilled.Count - 1].transform.position = new Vector3(v.x, v.y, v.z);
+            }
+        }
+
         WhiteCheckers = new List<GameObject>();
         BlackCheckers = new List<GameObject>();
         WhiteQueens = new List<GameObject>();
@@ -917,9 +1014,58 @@ public class PlayScript : MonoBehaviour
         ChosenChecker.transform.position = new Vector3(pos.x, pos.y, -2);
     }
 
+    void ShowKilledChecker(int bcCount, int wcCount, int bqCount, int wqCount)
+    {
+        if (bcCount != BlackCheckers.Count)
+        {
+            if (bqCount == BlackQueens.Count)
+            {
+                BlackCheckersKilled.Add(Instantiate(BlackFigure));
+            }
+            else
+            {
+                BlackCheckersKilled.Add(Instantiate(BlackQueen));
+            }
+            if (BlackCheckersKilled.Count <= 8)
+            {
+                BlackCheckersKilled[BlackCheckersKilled.Count - 1].transform.position = new Vector3(ConvertxToFloatCoordinate(BlackCheckersKilled.Count - 1), ConvertyToFloatCoordinate(0) - 2 * DISTANCE, -2);
+            }
+            else
+            {
+                BlackCheckersKilled[BlackCheckersKilled.Count - 1].transform.position = new Vector3(ConvertxToFloatCoordinate(BlackCheckersKilled.Count - 9), ConvertyToFloatCoordinate(0) - 3 * DISTANCE, -2);
+            }
+        }
+        else if (wcCount != WhiteCheckers.Count)
+        {
+            if (wqCount == WhiteQueens.Count)
+            {
+                WhiteCheckersKilled.Add(Instantiate(WhiteFigure));
+            }
+            else
+            {
+                WhiteCheckersKilled.Add(Instantiate(WhiteQueen));
+            }
+            if (WhiteCheckersKilled.Count <= 8)
+            {
+                WhiteCheckersKilled[WhiteCheckersKilled.Count - 1].transform.position = new Vector3(ConvertxToFloatCoordinate(WhiteCheckersKilled.Count - 1), ConvertyToFloatCoordinate(7) + 2 * DISTANCE, -2);
+            }
+            else
+            {
+                WhiteCheckersKilled[WhiteCheckersKilled.Count - 1].transform.position = new Vector3(ConvertxToFloatCoordinate(WhiteCheckersKilled.Count - 9), ConvertyToFloatCoordinate(7) + 3 * DISTANCE, -2);
+            } 
+        }
+    }
+
     void Hit(int kill_x, int kill_y)
     {
+        int bccount = BlackCheckers.Count;
+        int wccount = WhiteCheckers.Count;
+        int bqcount = BlackQueens.Count;
+        int wqcount = WhiteQueens.Count;
+
+        
         DeleteChecker(kill_x, kill_y, WhiteMoveExpected);
+        ShowKilledChecker(bccount,wccount,bqcount,wqcount);
         GoTo(x, y);
         if (CanHit() || CanHitBack() || QueenCanHit())
         {
