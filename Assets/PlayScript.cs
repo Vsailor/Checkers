@@ -517,14 +517,18 @@ public class PlayScript : MonoBehaviour
                         o = BlackQueens[j];
                         if (x == ConvertxToIntCoordinate(o.transform.position.x) && y == ConvertyToIntCoordinate(o.transform.position.y))
                         {
-                            print(x + " " + y);
                             BlackQueens.RemoveAt(j);
+                            j = 0;
                             o.transform.position = new Vector3(o.transform.position.x, o.transform.position.y, 3);
                             Destroy(o);
+                            print("Black queens count = " + BlackQueens.Count);
 
                         }
                     }
                     Destroy(obj);
+                    i = 0;
+                    print("Black checkers count = " + BlackCheckers.Count);
+
                 }
             }
         }
@@ -543,13 +547,16 @@ public class PlayScript : MonoBehaviour
                         o = WhiteQueens[j];
                         if (x == ConvertxToIntCoordinate(o.transform.position.x) && y == ConvertyToIntCoordinate(o.transform.position.y))
                         {
-                            print(x + " " + y);
                             WhiteQueens.RemoveAt(j);
                             o.transform.position = new Vector3(o.transform.position.x, o.transform.position.y, 3);
                             Destroy(o);
+                            j = 0;
+                            print("White queens count = " + WhiteQueens.Count);
                         }
                     }
                     Destroy(obj);
+                    i = 0;
+                    print("White checkers count = " + WhiteCheckers.Count);
                 }
             }
         }
@@ -874,7 +881,7 @@ public class PlayScript : MonoBehaviour
             if (Mathf.Abs(obj.transform.position.x - MousePos.x) < DISTANCE / 2 && Mathf.Abs(obj.transform.position.y - MousePos.y) < DISTANCE / 2)
             {
                 ChosenChecker = obj;
-                if (CanHit() || CanHitBack())
+                if (CanHit() || CanHitBack() || QueenCanHit())
                 {
                     MouseClicked = true;
                     ChosenChecker = obj;
@@ -941,6 +948,7 @@ public class PlayScript : MonoBehaviour
 
     bool TryHit()
     {
+        print(x + " " + old_x + " " + y + " " + old_y);
         if ((x - old_x == 2) &&
              ((WhiteMoveExpected && CheckWhiteChecker(x - 2, y + 2) && CheckBlackChecker(x - 1, y + 1)) ||
              (!WhiteMoveExpected && CheckBlackChecker(x - 2, y + 2) && CheckWhiteChecker(x - 1, y + 1))))
@@ -983,7 +991,6 @@ public class PlayScript : MonoBehaviour
                 qy = b + i;
                 if (CheckEmptyCell(qx, qy))
                 {
-                    print("1)" + qx + " " + qy);
                     if (((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))
                         || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2)))
                         && qx + 2 == ConvertxToIntCoordinate(MousePos.x) && qy + 2 == ConvertyToIntCoordinate(MousePos.y))
@@ -1004,10 +1011,8 @@ public class PlayScript : MonoBehaviour
             {
                 qx = a - i;
                 qy = b - i;
-                print(qx + " " + qy);
                 if (CheckEmptyCell(qx, qy))
                 {
-                    print("if 2)" + qx + " " + qy);
                     if (((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2))
                         || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2)))
                         && qx - 2 == ConvertxToIntCoordinate(MousePos.x) && qy - 2 == ConvertyToIntCoordinate(MousePos.y))
@@ -1030,7 +1035,6 @@ public class PlayScript : MonoBehaviour
                 qy = b - i;
                 if (CheckEmptyCell(qx, qy))
                 {
-                    print("3)" + qx + " " + qy);
                     if (((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2))
                         || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2)))
                         && qx + 2 == ConvertxToIntCoordinate(MousePos.x) && qy - 2 == ConvertyToIntCoordinate(MousePos.y))
@@ -1053,7 +1057,6 @@ public class PlayScript : MonoBehaviour
                 qy = b + i;
                 if (CheckEmptyCell(qx, qy))
                 {
-                    print("4)" + qx + " " + qy);
                     if (((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2))
                         || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2)))
                         && qx - 2 == ConvertxToIntCoordinate(MousePos.x) && qy + 2 == ConvertyToIntCoordinate(MousePos.y))
@@ -1081,76 +1084,77 @@ public class PlayScript : MonoBehaviour
         int b = ConvertyToIntCoordinate(ChosenChecker.transform.position.y);
         int qx = a;
         int qy = b;
-
-        for (int i = 1; a + i < 8 && b + i < 8; i++)
+        if (IsQueen(ChosenChecker))
         {
-            qx = a + i;
-            qy = b + i;
-            if (CheckEmptyCell(qx, qy))
+            for (int i = 1; a + i < 8 && b + i < 8; i++)
             {
-                if ((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))
-                    || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2)))
+                qx = a + i;
+                qy = b + i;
+                if (CheckEmptyCell(qx, qy))
                 {
-                    return true;
+                    if ((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2)))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
                 }
             }
-            else
+            for (int i = 1; a - i >= 0 && b - i >= 0; i++)
             {
-                break;
-            }
-        }
-        for (int i = 1; a - i >= 0 && b - i >= 0; i--)
-        {
-            qx = a - i;
-            qy = b - i;
-            if (CheckEmptyCell(qx, qy))
-            {
-                if ((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2))
-                    || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2)))
+                qx = a - i;
+                qy = b - i;
+                if (CheckEmptyCell(qx, qy))
                 {
-                    return true;
+                    if ((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2)))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
                 }
             }
-            else
+            for (int i = 1; a + i < 8 && b - i >= 0; i++)
             {
-                break;
-            }
-        }
-        for (int i = 1; a + i < 8 && b - i >= 0; i++)
-        {
-            qx = a + i;
-            qy = b - i;
-            if (CheckEmptyCell(qx, qy))
-            {
-                if ((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2))
-                    || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2)))
+                qx = a + i;
+                qy = b - i;
+                if (CheckEmptyCell(qx, qy))
                 {
-                    return true;
+                    if ((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2)))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
                 }
             }
-            else
+            for (int i = 1; a - i >= 0 && b + i < 8; i++)
             {
-                break;
-            }
-        }
-        for (int i = 1; a - i >= 0 && b + i < 8; i++)
-        {
-            qx = a - i;
-            qy = b + i;
-            if (CheckEmptyCell(qx, qy))
-            {
-                if ((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2))
-                    || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2)))
+                qx = a - i;
+                qy = b + i;
+                if (CheckEmptyCell(qx, qy))
                 {
-                    return true;
+                    if ((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2)))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
                 }
             }
-            else
-            {
-                break;
-            }
         }
-
         return false;
     }
 
@@ -1166,6 +1170,48 @@ public class PlayScript : MonoBehaviour
     // Initialize variables every moment
     void Init()
     {
+        if (BlackQueens != null && BlackCheckers != null)
+        {
+            int counter = 0;
+            for (int i = 0; i < BlackQueens.Count; i++)
+            {
+                for (int j = 0; j < BlackCheckers.Count; j++)
+                {
+                    if (BlackQueens[i].transform.position.x == BlackCheckers[j].transform.position.x
+                        && BlackQueens[i].transform.position.y == BlackCheckers[j].transform.position.y)
+                    {
+                        counter++;
+                    }
+                }
+                if (counter != 1)
+                {
+                    BlackQueens.RemoveAt(i);
+                    counter = 0;
+                }
+            }
+
+        }
+        if (WhiteQueens != null && WhiteCheckers != null)
+        {
+            int counter = 0;
+            for (int i = 0; i < WhiteQueens.Count; i++)
+            {
+                for (int j = 0; j < WhiteCheckers.Count; j++)
+                {
+                    if (WhiteQueens[i].transform.position.x == WhiteCheckers[j].transform.position.x
+                        && WhiteQueens[i].transform.position.y == WhiteCheckers[j].transform.position.y)
+                    {
+                        counter++;
+                    }
+                }
+                if (counter != 1)
+                {
+                    WhiteQueens.RemoveAt(i);
+                    counter = 0;
+                }
+            }
+
+        }
         MousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         OldIntCheckerPos = new Vector2(ConvertxToIntCoordinate(ChosenCheckerOldPos.x), ConvertyToIntCoordinate(ChosenCheckerOldPos.y));
     }
@@ -1179,10 +1225,22 @@ public class PlayScript : MonoBehaviour
         {
             obj = o as GameObject;
             ChosenChecker = obj;
+ 
             if (CanHit() || CanHitBack())
             {
                 IsHaveToHit = true;
                 FiguresHaveToHit.Add(obj);
+            }
+            if (IsQueen(obj))
+            {
+                GameObject reserv = ChosenChecker;
+                ChosenChecker = obj;
+                if (QueenCanHit())
+                {
+                    IsHaveToHit = true;
+                    FiguresHaveToHit.Add(ChosenChecker);
+                    ChosenChecker = reserv;
+                }
             }
         }
         if (IsHaveToHit)
@@ -1224,7 +1282,6 @@ public class PlayScript : MonoBehaviour
     {
         if (Mathf.Abs(ConvertxToIntCoordinate(ChosenChecker.transform.position.x) - x) == Mathf.Abs(ConvertyToIntCoordinate(ChosenChecker.transform.position.y) - y))
         {
-            print("This queen can go");
             return true;
         }
         return false;
@@ -1417,17 +1474,25 @@ public class PlayScript : MonoBehaviour
                     }
                     if (ChosenQueen())
                     {
-
+                        print("cc");
                         if (CanQueenGoTo(x, y))
                         {
-                            //GoTo(x, y);
-
-                            if (TryHit())
+                            if (QueenCanHit())
                             {
+                                print("QueenCanHit");
+                                if (TryHit())
+                                {
+                                    Save();
+                                    return;
+                                }
+
+                            }
+                            else if (!MultiHit && !IsHaveToHit)
+                            {
+                                TryToGoQueen(x, y);
                                 Save();
                                 return;
                             }
-                            TryToGoQueen(x, y);
                         }
                     }
                 }
