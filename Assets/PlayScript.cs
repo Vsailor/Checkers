@@ -715,6 +715,7 @@ public class PlayScript : MonoBehaviour
                 GameObject obj = Instantiate(WhiteQueen);
                 obj.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -2);
                 WhiteQueens.Add(obj);
+                print("Maked w queen");
             }
         }
         if (CheckEmptyCell(x, y) && !WhiteMoveExpected)
@@ -724,6 +725,7 @@ public class PlayScript : MonoBehaviour
                 GameObject obj = Instantiate(BlackQueen);
                 obj.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -2);
                 BlackQueens.Add(obj);
+                print("Maked b queen");
             }
         }
     }
@@ -779,7 +781,10 @@ public class PlayScript : MonoBehaviour
 
         if (MouseClicked && Array[y, x] == 0)
         {
-            TryToGetQueen(x, y);
+            if (!IsQueen(ChosenChecker))
+            {
+                TryToGetQueen(x, y);
+            }
             Array[ConvertyToIntCoordinate(ChosenCheckerOldPos.y), ConvertxToIntCoordinate(ChosenCheckerOldPos.x)] = 0;
             if (WhiteMoveExpected)
             {
@@ -948,7 +953,6 @@ public class PlayScript : MonoBehaviour
 
     bool TryHit()
     {
-        print(x + " " + old_x + " " + y + " " + old_y);
         if ((x - old_x == 2) &&
              ((WhiteMoveExpected && CheckWhiteChecker(x - 2, y + 2) && CheckBlackChecker(x - 1, y + 1)) ||
              (!WhiteMoveExpected && CheckBlackChecker(x - 2, y + 2) && CheckWhiteChecker(x - 1, y + 1))))
@@ -1170,48 +1174,48 @@ public class PlayScript : MonoBehaviour
     // Initialize variables every moment
     void Init()
     {
-        if (BlackQueens != null && BlackCheckers != null)
-        {
-            int counter = 0;
-            for (int i = 0; i < BlackQueens.Count; i++)
-            {
-                for (int j = 0; j < BlackCheckers.Count; j++)
-                {
-                    if (BlackQueens[i].transform.position.x == BlackCheckers[j].transform.position.x
-                        && BlackQueens[i].transform.position.y == BlackCheckers[j].transform.position.y)
-                    {
-                        counter++;
-                    }
-                }
-                if (counter != 1)
-                {
-                    BlackQueens.RemoveAt(i);
-                    counter = 0;
-                }
-            }
+        //if (BlackQueens != null && BlackCheckers != null)
+        //{
+        //    int counter = 0;
+        //    for (int i = 0; i < BlackQueens.Count; i++)
+        //    {
+        //        for (int j = 0; j < BlackCheckers.Count; j++)
+        //        {
+        //            if (BlackQueens[i].transform.position.x == BlackCheckers[j].transform.position.x
+        //                && BlackQueens[i].transform.position.y == BlackCheckers[j].transform.position.y)
+        //            {
+        //                counter++;
+        //            }
+        //        }
+        //        if (counter != 1)
+        //        {
+        //            BlackQueens.RemoveAt(i);
+        //            counter = 0;
+        //        }
+        //    }
 
-        }
-        if (WhiteQueens != null && WhiteCheckers != null)
-        {
-            int counter = 0;
-            for (int i = 0; i < WhiteQueens.Count; i++)
-            {
-                for (int j = 0; j < WhiteCheckers.Count; j++)
-                {
-                    if (WhiteQueens[i].transform.position.x == WhiteCheckers[j].transform.position.x
-                        && WhiteQueens[i].transform.position.y == WhiteCheckers[j].transform.position.y)
-                    {
-                        counter++;
-                    }
-                }
-                if (counter != 1)
-                {
-                    WhiteQueens.RemoveAt(i);
-                    counter = 0;
-                }
-            }
+        //}
+        //if (WhiteQueens != null && WhiteCheckers != null)
+        //{
+        //    int counter = 0;
+        //    for (int i = 0; i < WhiteQueens.Count; i++)
+        //    {
+        //        for (int j = 0; j < WhiteCheckers.Count; j++)
+        //        {
+        //            if (WhiteQueens[i].transform.position.x == WhiteCheckers[j].transform.position.x
+        //                && WhiteQueens[i].transform.position.y == WhiteCheckers[j].transform.position.y)
+        //            {
+        //                counter++;
+        //            }
+        //        }
+        //        if (counter != 1)
+        //        {
+        //            WhiteQueens.RemoveAt(i);
+        //            counter = 0;
+        //        }
+        //    }
 
-        }
+        //}
         MousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         OldIntCheckerPos = new Vector2(ConvertxToIntCoordinate(ChosenCheckerOldPos.x), ConvertyToIntCoordinate(ChosenCheckerOldPos.y));
     }
@@ -1474,12 +1478,10 @@ public class PlayScript : MonoBehaviour
                     }
                     if (ChosenQueen())
                     {
-                        print("cc");
                         if (CanQueenGoTo(x, y))
                         {
                             if (QueenCanHit())
                             {
-                                print("QueenCanHit");
                                 if (TryHit())
                                 {
                                     Save();
