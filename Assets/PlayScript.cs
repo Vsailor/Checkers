@@ -1174,48 +1174,6 @@ public class PlayScript : MonoBehaviour
     // Initialize variables every moment
     void Init()
     {
-        //if (BlackQueens != null && BlackCheckers != null)
-        //{
-        //    int counter = 0;
-        //    for (int i = 0; i < BlackQueens.Count; i++)
-        //    {
-        //        for (int j = 0; j < BlackCheckers.Count; j++)
-        //        {
-        //            if (BlackQueens[i].transform.position.x == BlackCheckers[j].transform.position.x
-        //                && BlackQueens[i].transform.position.y == BlackCheckers[j].transform.position.y)
-        //            {
-        //                counter++;
-        //            }
-        //        }
-        //        if (counter != 1)
-        //        {
-        //            BlackQueens.RemoveAt(i);
-        //            counter = 0;
-        //        }
-        //    }
-
-        //}
-        //if (WhiteQueens != null && WhiteCheckers != null)
-        //{
-        //    int counter = 0;
-        //    for (int i = 0; i < WhiteQueens.Count; i++)
-        //    {
-        //        for (int j = 0; j < WhiteCheckers.Count; j++)
-        //        {
-        //            if (WhiteQueens[i].transform.position.x == WhiteCheckers[j].transform.position.x
-        //                && WhiteQueens[i].transform.position.y == WhiteCheckers[j].transform.position.y)
-        //            {
-        //                counter++;
-        //            }
-        //        }
-        //        if (counter != 1)
-        //        {
-        //            WhiteQueens.RemoveAt(i);
-        //            counter = 0;
-        //        }
-        //    }
-
-        //}
         MousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         OldIntCheckerPos = new Vector2(ConvertxToIntCoordinate(ChosenCheckerOldPos.x), ConvertyToIntCoordinate(ChosenCheckerOldPos.y));
     }
@@ -1366,6 +1324,7 @@ public class PlayScript : MonoBehaviour
         return false;
     }
 
+
     // General playing method
     void Playing()
     {
@@ -1379,6 +1338,7 @@ public class PlayScript : MonoBehaviour
             ST.Instanse.Winner = 1;
             Save();
         }
+        
         // White checker choose
         if (WhiteMoveExpected && Click() && !MouseClicked && !MultiHit)
         {
