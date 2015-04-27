@@ -517,8 +517,11 @@ public class PlayScript : MonoBehaviour
                         o = BlackQueens[j];
                         if (x == ConvertxToIntCoordinate(o.transform.position.x) && y == ConvertyToIntCoordinate(o.transform.position.y))
                         {
+                            print(x + " " + y);
                             BlackQueens.RemoveAt(j);
+                            o.transform.position = new Vector3(o.transform.position.x, o.transform.position.y, 3);
                             Destroy(o);
+
                         }
                     }
                     Destroy(obj);
@@ -540,7 +543,9 @@ public class PlayScript : MonoBehaviour
                         o = WhiteQueens[j];
                         if (x == ConvertxToIntCoordinate(o.transform.position.x) && y == ConvertyToIntCoordinate(o.transform.position.y))
                         {
+                            print(x + " " + y);
                             WhiteQueens.RemoveAt(j);
+                            o.transform.position = new Vector3(o.transform.position.x, o.transform.position.y, 3);
                             Destroy(o);
                         }
                     }
@@ -904,7 +909,7 @@ public class PlayScript : MonoBehaviour
     {
         DeleteChecker(kill_x, kill_y, WhiteMoveExpected);
         GoTo(x, y);
-        if (CanHit() || CanHitBack())
+        if (CanHit() || CanHitBack() || QueenCanHit())
         {
             ChosenCheckerOldPos = ChosenChecker.transform.position;
             MouseClicked = true;
@@ -916,6 +921,7 @@ public class PlayScript : MonoBehaviour
             WhiteMoveExpectedChange();
             HideRedSignals();
         }
+
         FiguresHaveToHit.Clear();
         Save();
     }
@@ -966,23 +972,24 @@ public class PlayScript : MonoBehaviour
         }
         if (ChosenQueen())
         {
-            x = ConvertxToIntCoordinate(ChosenChecker.transform.position.x);
-            y = ConvertyToIntCoordinate(ChosenChecker.transform.position.y);
-            int qx = x;
-            int qy = y;
-
-            for (int i = 1; x + i < 8 && y + i < 8; i++)
+            int a = ConvertxToIntCoordinate(ChosenChecker.transform.position.x);
+            int b = ConvertyToIntCoordinate(ChosenChecker.transform.position.y);
+            int qx = a;
+            int qy = b;
+            // right top move
+            for (int i = 1; a + i < 8 && b + i < 8; i++)
             {
-                qx = x + i;
-                qy = y + i;
+                qx = a + i;
+                qy = b + i;
                 if (CheckEmptyCell(qx, qy))
                 {
+                    print("1)" + qx + " " + qy);
                     if (((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))
-                        || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))) 
-                        && qx+2 == ConvertxToIntCoordinate(MousePos.x) && qy+2 == ConvertyToIntCoordinate(MousePos.y))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2)))
+                        && qx + 2 == ConvertxToIntCoordinate(MousePos.x) && qy + 2 == ConvertyToIntCoordinate(MousePos.y))
                     {
-                        this.x = qx+2;
-                        this.y = qy+2;
+                        this.x = qx + 2;
+                        this.y = qy + 2;
                         Hit(qx + 1, qy + 1);
                         return true;
                     }
@@ -992,18 +999,21 @@ public class PlayScript : MonoBehaviour
                     break;
                 }
             }
-            for (int i = 1; x - i >= 0 && y - i >= 0; i--)
+            // left bottom move
+            for (int i = 1; a - i >= 0 && b - i >= 0; i++)
             {
-                qx = x - i;
-                qy = y - i;
+                qx = a - i;
+                qy = b - i;
+                print(qx + " " + qy);
                 if (CheckEmptyCell(qx, qy))
                 {
+                    print("if 2)" + qx + " " + qy);
                     if (((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2))
                         || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2)))
-                        && qx - 2  == ConvertxToIntCoordinate(MousePos.x) && qy-2 == ConvertyToIntCoordinate(MousePos.y))
+                        && qx - 2 == ConvertxToIntCoordinate(MousePos.x) && qy - 2 == ConvertyToIntCoordinate(MousePos.y))
                     {
-                        this.x = qx-2;
-                        this.y = qy-2;
+                        this.x = qx - 2;
+                        this.y = qy - 2;
                         Hit(qx - 1, qy - 1);
                         return true;
                     }
@@ -1013,18 +1023,20 @@ public class PlayScript : MonoBehaviour
                     break;
                 }
             }
-            for (int i = 1; x + i < 8 && y - i >= 0; i++)
+            // right bottom move
+            for (int i = 1; a + i < 8 && b - i >= 0; i++)
             {
-                qx = x + i;
-                qy = y - i;
+                qx = a + i;
+                qy = b - i;
                 if (CheckEmptyCell(qx, qy))
                 {
+                    print("3)" + qx + " " + qy);
                     if (((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2))
                         || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2)))
                         && qx + 2 == ConvertxToIntCoordinate(MousePos.x) && qy - 2 == ConvertyToIntCoordinate(MousePos.y))
                     {
-                        this.x = qx+2;
-                        this.y = qy-2;
+                        this.x = qx + 2;
+                        this.y = qy - 2;
                         Hit(qx + 1, qy - 1);
                         return true;
                     }
@@ -1034,18 +1046,20 @@ public class PlayScript : MonoBehaviour
                     break;
                 }
             }
-            for (int i = 1; x - i >= 0 && y + i < 8; i++)
+            // left top move
+            for (int i = 1; a - i >= 0 && b + i < 8; i++)
             {
-                qx = x - i;
-                qy = y + i;
+                qx = a - i;
+                qy = b + i;
                 if (CheckEmptyCell(qx, qy))
                 {
+                    print("4)" + qx + " " + qy);
                     if (((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2))
                         || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2)))
                         && qx - 2 == ConvertxToIntCoordinate(MousePos.x) && qy + 2 == ConvertyToIntCoordinate(MousePos.y))
-                    { 
-                        this.x = qx-2;
-                        this.y = qy+2;
+                    {
+                        this.x = qx - 2;
+                        this.y = qy + 2;
                         Hit(qx - 1, qy + 1);
                         return true;
                     }
@@ -1056,14 +1070,89 @@ public class PlayScript : MonoBehaviour
                 }
             }
         }
-        else
-        {
-          
-        }
 
         return false;
     }
 
+
+    bool QueenCanHit()
+    {
+        int a = ConvertxToIntCoordinate(ChosenChecker.transform.position.x);
+        int b = ConvertyToIntCoordinate(ChosenChecker.transform.position.y);
+        int qx = a;
+        int qy = b;
+
+        for (int i = 1; a + i < 8 && b + i < 8; i++)
+        {
+            qx = a + i;
+            qy = b + i;
+            if (CheckEmptyCell(qx, qy))
+            {
+                if ((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))
+                    || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2)))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+        for (int i = 1; a - i >= 0 && b - i >= 0; i--)
+        {
+            qx = a - i;
+            qy = b - i;
+            if (CheckEmptyCell(qx, qy))
+            {
+                if ((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2))
+                    || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2)))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+        for (int i = 1; a + i < 8 && b - i >= 0; i++)
+        {
+            qx = a + i;
+            qy = b - i;
+            if (CheckEmptyCell(qx, qy))
+            {
+                if ((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2))
+                    || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2)))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+        for (int i = 1; a - i >= 0 && b + i < 8; i++)
+        {
+            qx = a - i;
+            qy = b + i;
+            if (CheckEmptyCell(qx, qy))
+            {
+                if ((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2))
+                    || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2)))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return false;
+    }
 
     bool Click()
     {
@@ -1135,6 +1224,7 @@ public class PlayScript : MonoBehaviour
     {
         if (Mathf.Abs(ConvertxToIntCoordinate(ChosenChecker.transform.position.x) - x) == Mathf.Abs(ConvertyToIntCoordinate(ChosenChecker.transform.position.y) - y))
         {
+            print("This queen can go");
             return true;
         }
         return false;
@@ -1146,8 +1236,7 @@ public class PlayScript : MonoBehaviour
         int qy = ConvertyToIntCoordinate(ChosenChecker.transform.position.y);
         if (x < qx && y < qy)
         {
-
-            for (int i = qx-1, j = qy-1; i >= x && j >= y; i--, j--)
+            for (int i = qx - 1, j = qy - 1; i >= x && j >= y; i--, j--)
             {
                 if (i == x && j == y)
                 {
@@ -1159,12 +1248,12 @@ public class PlayScript : MonoBehaviour
                 {
                     break;
                 }
-  
+
             }
         }
         if (x > qx && y < qy)
         {
-            for (int i = qx+1, j = qy-1; i <= x && j >= y; i++, j--)
+            for (int i = qx + 1, j = qy - 1; i <= x && j >= y; i++, j--)
             {
                 if (i == x && j == y)
                 {
@@ -1181,7 +1270,7 @@ public class PlayScript : MonoBehaviour
         }
         if (x < qx && y > qy)
         {
-            for (int i = qx-1, j = qy+1; i >= x && j <= y; i--, j++)
+            for (int i = qx - 1, j = qy + 1; i >= x && j <= y; i--, j++)
             {
                 if (i == x && j == y)
                 {
@@ -1196,9 +1285,9 @@ public class PlayScript : MonoBehaviour
 
             }
         }
-        if (x > qx && y < qy)
+        if (x > qx && y > qy)
         {
-            for (int i = qx+1, j = qy+1; i <= x && j <= y; i++, j++)
+            for (int i = qx + 1, j = qy + 1; i <= x && j <= y; i++, j++)
             {
                 if (i == x && j == y)
                 {
@@ -1332,18 +1421,20 @@ public class PlayScript : MonoBehaviour
                         if (CanQueenGoTo(x, y))
                         {
                             //GoTo(x, y);
-                            TryToGoQueen(x, y);
+
                             if (TryHit())
                             {
                                 Save();
+                                return;
                             }
-                            return;
+                            TryToGoQueen(x, y);
                         }
                     }
                 }
             }
 
         }
+        return;
 
     }
     void StartGameWithPlayer()
@@ -1367,6 +1458,5 @@ public class PlayScript : MonoBehaviour
             ST.Instanse.StartGame = false;
             ST.Instanse.GameStarted = true;
         }
-
     }
 }
