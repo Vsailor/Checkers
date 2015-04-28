@@ -19,12 +19,11 @@ public class PlayScript : MonoBehaviour
 
     // Distance between the nearest cells
     public const float DISTANCE = (float)(0.81);
-    public GameObject HelpSignal;
+
     public GameObject RedSignal;
     public GameObject GreenSignal;
     List<GameObject> RedSignals;
     // All figures
-    List<GameObject> HelpSignals;
     List<GameObject> WhiteCheckers;
     List<GameObject> BlackCheckers;
     List<GameObject> WhiteQueens;
@@ -221,38 +220,6 @@ public class PlayScript : MonoBehaviour
 
     }
 
-    void ShowHelpSignals(bool color)
-    {
-        if (HelpSignals.Count == 0)
-        {
-            if (color)
-            {
-                foreach (var v in WhiteCheckers)
-                {
-                    HelpSignals.Add(Instantiate(HelpSignal));
-                    HelpSignals[HelpSignals.Count - 1].transform.position = new Vector3(v.transform.position.x, v.transform.position.y, -0.25f);
-                }
-            }
-            else
-            {
-                foreach (var v in BlackCheckers)
-                {
-                    HelpSignals.Add(Instantiate(HelpSignal));
-                    HelpSignals[HelpSignals.Count - 1].transform.position = new Vector3(v.transform.position.x, v.transform.position.y, -0.25f);
-                }
-            }
-        }
-    }
-
-    void HideHelpSignals()
-    {
-        for (int i = 0; i < HelpSignals.Count; i++)
-        {
-            Destroy(HelpSignals[i]);
-        }
-        HelpSignals.Clear();
-    }
-
     void Start2()
     {
         LeftBottomCorner = ST.Instanse.LeftBottomCorner;
@@ -329,17 +296,12 @@ public class PlayScript : MonoBehaviour
             }
             BlackCheckersKilled.Clear();
         }
-        if (HelpSignals != null)
-        {
-            HideHelpSignals();
-        }
         WhiteQueens = new List<GameObject>();
         BlackQueens = new List<GameObject>();
         WhiteCheckers = new List<GameObject>();
         BlackCheckers = new List<GameObject>();
         WhiteCheckersKilled = new List<GameObject>();
         BlackCheckersKilled = new List<GameObject>();
-        HelpSignals = new List<GameObject>();
         MouseClicked = false;
         MultiHit = false;
         IsHaveToHit = false;
@@ -1522,33 +1484,6 @@ public class PlayScript : MonoBehaviour
             ST.Instanse.Winner = 1;
             Save();
         }
-
-        if (WhiteMoveExpected && Click() && !MouseClicked && !MultiHit)
-        {
-            foreach (var v in BlackCheckers)
-            {
-                if (ConvertxToIntCoordinate(v.transform.position.x) == ConvertxToIntCoordinate(MousePos.x)
-                    && ConvertyToIntCoordinate(v.transform.position.y) == ConvertyToIntCoordinate(MousePos.y))
-                {
-                    ShowHelpSignals(WhiteMoveExpected);
-                    return;
-                }
-            }
-
-        }
-        if (!WhiteMoveExpected && Click() && !MouseClicked && !MultiHit)
-        {
-            foreach (var v in WhiteCheckers)
-            {
-                if (ConvertxToIntCoordinate(v.transform.position.x) == ConvertxToIntCoordinate(MousePos.x)
-                    && ConvertyToIntCoordinate(v.transform.position.y) == ConvertyToIntCoordinate(MousePos.y))
-                {
-                    ShowHelpSignals(WhiteMoveExpected);
-                    return;
-                }
-            }
-
-        }
         
         // White checker choose
         if (WhiteMoveExpected && Click() && !MouseClicked && !MultiHit)
@@ -1559,13 +1494,12 @@ public class PlayScript : MonoBehaviour
 
                 TryToChooseChecker(WhiteCheckers);
                 HideRedSignals();
-                HideHelpSignals();
 
             }
             else
             {
+
                 TryToChooseCheckerToHit();
-                HideHelpSignals();
             }
             return;
         }
@@ -1573,22 +1507,25 @@ public class PlayScript : MonoBehaviour
         // Black checker choose
         if (!WhiteMoveExpected && Click() && !MouseClicked && !MultiHit)
         {
- 
             if (!HaveToHit(BlackCheckers))
             {
                 TryToChooseChecker(BlackCheckers);
-                HideRedSignals();
-                HideHelpSignals();
             }
             else
             {
                 TryToChooseCheckerToHit();
-                HideHelpSignals();
             }
             return;
         }
-        
 
+        // Checker move
+        if (!Click() && MouseClicked)
+        {
+
+            /*
+            MoveCheckerAfterTheCursor();
+            return;*/
+        }
 
         // Checker set
         if (Click() && MouseClicked)
@@ -1599,7 +1536,6 @@ public class PlayScript : MonoBehaviour
             // If we in the game square
             if (MousePosIsInTheGameSquare())
             {
-
                 x = ConvertxToIntCoordinate(MousePos.x);
                 y = ConvertyToIntCoordinate(MousePos.y);
 
@@ -1668,7 +1604,6 @@ public class PlayScript : MonoBehaviour
                         }
                     }
                 }
-
             }
 
         }
