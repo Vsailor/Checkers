@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 
 public class ST : MonoBehaviour {
+    public AudioSource Audio;
     // 1 - white, 0 - black, -1 - NoWinner
     public int Winner;
     public static ST Instanse;
@@ -36,7 +37,11 @@ public class ST : MonoBehaviour {
         MenuGameMove = 0;
         if (File.Exists(Application.persistentDataPath + @"\Lang.cfg"))
         {
-            Language = System.Convert.ToBoolean(File.ReadAllText(Application.persistentDataPath + @"\Lang.cfg"));
+            BinaryReader br = new BinaryReader(new FileStream(Application.persistentDataPath + @"\Lang.cfg", FileMode.Open));
+            Language = br.ReadBoolean();
+            Music = br.ReadBoolean();
+            Sounds = br.ReadBoolean();
+            br.Close();
         }
         else
         {
@@ -52,5 +57,13 @@ public class ST : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         Instanse = this;
+        if (Music)
+        {
+            Audio.mute = false;
+        }
+        else
+        {
+            Audio.mute = true;
+        }
 	}
 }

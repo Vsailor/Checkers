@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 
 public class PlayScript : MonoBehaviour
 {
+    public AudioSource CheckersSound;
     public GameObject WhiteFigure;
 
     public GameObject BlackFigure;
@@ -585,13 +586,11 @@ public class PlayScript : MonoBehaviour
                             j = 0;
                             o.transform.position = new Vector3(o.transform.position.x, o.transform.position.y, 3);
                             Destroy(o);
-                            print("Black queens count = " + BlackQueens.Count);
 
                         }
                     }
                     Destroy(obj);
                     i = 0;
-                    print("Black checkers count = " + BlackCheckers.Count);
 
                 }
             }
@@ -615,12 +614,10 @@ public class PlayScript : MonoBehaviour
                             o.transform.position = new Vector3(o.transform.position.x, o.transform.position.y, 3);
                             Destroy(o);
                             j = 0;
-                            print("White queens count = " + WhiteQueens.Count);
                         }
                     }
                     Destroy(obj);
                     i = 0;
-                    print("White checkers count = " + WhiteCheckers.Count);
                 }
             }
         }
@@ -850,7 +847,6 @@ public class PlayScript : MonoBehaviour
                 GameObject obj = Instantiate(WhiteQueen);
                 obj.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -2);
                 WhiteQueens.Add(obj);
-                print("Maked w queen");
             }
         }
         if (CheckEmptyCell(x, y) && !WhiteMoveExpected)
@@ -860,7 +856,6 @@ public class PlayScript : MonoBehaviour
                 GameObject obj = Instantiate(BlackQueen);
                 obj.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -2);
                 BlackQueens.Add(obj);
-                print("Maked b queen");
             }
         }
     }
@@ -913,7 +908,10 @@ public class PlayScript : MonoBehaviour
     void GoTo(int x, int y)
     {
         HideGreenSignal();
-
+        if (ST.Instanse.Sounds)
+        {
+            CheckersSound.Play();
+        }
         if (MouseClicked && Array[y, x] == 0)
         {
             if (!IsQueen(ChosenChecker))
