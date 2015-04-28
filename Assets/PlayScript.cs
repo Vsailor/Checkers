@@ -585,11 +585,13 @@ public class PlayScript : MonoBehaviour
                             j = 0;
                             o.transform.position = new Vector3(o.transform.position.x, o.transform.position.y, 3);
                             Destroy(o);
+                            print("Black queens count = " + BlackQueens.Count);
 
                         }
                     }
                     Destroy(obj);
                     i = 0;
+                    print("Black checkers count = " + BlackCheckers.Count);
 
                 }
             }
@@ -613,10 +615,12 @@ public class PlayScript : MonoBehaviour
                             o.transform.position = new Vector3(o.transform.position.x, o.transform.position.y, 3);
                             Destroy(o);
                             j = 0;
+                            print("White queens count = " + WhiteQueens.Count);
                         }
                     }
                     Destroy(obj);
                     i = 0;
+                    print("White checkers count = " + WhiteCheckers.Count);
                 }
             }
         }
@@ -846,6 +850,7 @@ public class PlayScript : MonoBehaviour
                 GameObject obj = Instantiate(WhiteQueen);
                 obj.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -2);
                 WhiteQueens.Add(obj);
+                print("Maked w queen");
             }
         }
         if (CheckEmptyCell(x, y) && !WhiteMoveExpected)
@@ -855,6 +860,7 @@ public class PlayScript : MonoBehaviour
                 GameObject obj = Instantiate(BlackQueen);
                 obj.transform.position = new Vector3(ConvertxToFloatCoordinate(x), ConvertyToFloatCoordinate(y), -2);
                 BlackQueens.Add(obj);
+                print("Maked b queen");
             }
         }
     }
@@ -1129,193 +1135,11 @@ public class PlayScript : MonoBehaviour
         return false;
     }
 
-    bool CheckEmptyCells(int from_x, int from_y, int to_x, int to_y)
-    {
-        if (from_x <= to_x)
-        {
-            if (from_y <= to_y)
-            {
-                for (int i = from_x, j = from_y; i <= to_x && j<=to_y; i++, j++)
-                { 
-                    if (!CheckEmptyCell(i,j))
-                    {
-                        return false;
-                    }
-                }
-            }
-            if (from_y >= to_y)
-            {
-                for (int i = from_x, j = from_y; i <= to_x && j >= to_y; i++, j--)
-                {
-                    if (!CheckEmptyCell(i, j))
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-        if (from_x >= to_x)
-        {
-            if (from_y <= to_y)
-            {
-                for (int i = from_x, j = from_y; i >= to_x && j <= to_y; i--, j++)
-                {
-                    if (!CheckEmptyCell(i, j))
-                    {
-                        return false;
-                    }
-                }
-            }
-            if (from_y >= to_y)
-            {
-                for (int i = from_x, j = from_y; i >= to_x && j >= to_y; i--, j--)
-                {
-                    if (!CheckEmptyCell(i, j))
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
     bool TryHit()
     {
-       
-        if (ChosenQueen())
-        {
-            int a = ConvertxToIntCoordinate(ChosenChecker.transform.position.x);
-            int b = ConvertyToIntCoordinate(ChosenChecker.transform.position.y);
-            int qx = a;
-            int qy = b;
-            // right top move
-            for (int i = 1; a + i < 8 && b + i < 8; i++)
-            {
-                qx = a + i;
-                qy = b + i;
-                if (CheckEmptyCell(qx, qy))
-                {
-
-                    if (((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))
-                        || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2)))
-                        && CheckEmptyCells(qx+2, qy + 2, ConvertxToIntCoordinate(MousePos.x) , ConvertyToIntCoordinate(MousePos.y)))
-                    {
-                        this.x = ConvertxToIntCoordinate(MousePos.x);
-                        this.y = ConvertyToIntCoordinate(MousePos.y);
-                        Hit(qx + 1, qy + 1);
-                        return true;
-                    }
-                }
-                else if (CheckEmptyCells(qx+1, qy + 1, ConvertxToIntCoordinate(MousePos.x) , ConvertyToIntCoordinate(MousePos.y)))
-                {
-                    this.x = ConvertxToIntCoordinate(MousePos.x);
-                    this.y = ConvertyToIntCoordinate(MousePos.y);
-                    Hit(qx, qy);
-                    return true;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            // left bottom move
-            for (int i = 1; a - i >= 0 && b - i >= 0; i++)
-            {
-                qx = a - i;
-                qy = b - i;
-
-                if (CheckEmptyCell(qx, qy))
-                {
-                    if (((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2))
-                        || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2)))
-                        && CheckEmptyCells(qx - 2, qy - 2, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
-                    {
-                        this.x = ConvertxToIntCoordinate(MousePos.x);
-                        this.y = ConvertyToIntCoordinate(MousePos.y);
-                        Hit(qx - 1, qy - 1);
-                        return true;
-                    }
-                }
-                else if (CheckEmptyCells(qx - 1, qy - 1, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
-                {
-                    this.x = ConvertxToIntCoordinate(MousePos.x);
-                    this.y = ConvertyToIntCoordinate(MousePos.y);
-                    Hit(qx, qy);
-                    return true;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            // right bottom move
-            for (int i = 1; a + i < 8 && b - i >= 0; i++)
-            {
-                qx = a + i;
-                qy = b - i;
-                if (CheckEmptyCell(qx, qy))
-                {
-                    if (((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2))
-                        || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2)))
-                        && CheckEmptyCells(qx + 2, qy - 2, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
-                    {
-                        this.x = ConvertxToIntCoordinate(MousePos.x);
-                        this.y = ConvertyToIntCoordinate(MousePos.y);
-                        Hit(qx + 1, qy - 1);
-                        return true;
-                    }
-                }
-                else if (CheckEmptyCells(qx + 1, qy - 1, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
-                {
-                    this.x = ConvertxToIntCoordinate(MousePos.x);
-                    this.y = ConvertyToIntCoordinate(MousePos.y);
-                    Hit(qx, qy);
-                    return true;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            // left top move
-            for (int i = 1; a - i >= 0 && b + i < 8; i++)
-            {
-                qx = a - i;
-                qy = b + i;
-                if (CheckEmptyCell(qx, qy))
-                {
-                    if (((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2))
-                        || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2)))
-                        && CheckEmptyCells(qx - 2, qy + 2,ConvertxToIntCoordinate(MousePos.x),  ConvertyToIntCoordinate(MousePos.y)))
-                    {
-                        this.x = ConvertxToIntCoordinate(MousePos.x);
-                        this.y = ConvertyToIntCoordinate(MousePos.y);
-                        Hit(qx - 1, qy + 1);
-                        return true;
-                    }
-                }
-                else if (CheckEmptyCells(qx - 1, qy + 1, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
-                {
-                    this.x = ConvertxToIntCoordinate(MousePos.x);
-                    this.y = ConvertyToIntCoordinate(MousePos.y);
-                    Hit(qx, qy);
-                    return true;
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-
-
-
-
         if ((x - old_x == 2) &&
-            ((WhiteMoveExpected && CheckWhiteChecker(x - 2, y + 2) && CheckBlackChecker(x - 1, y + 1)) ||
-            (!WhiteMoveExpected && CheckBlackChecker(x - 2, y + 2) && CheckWhiteChecker(x - 1, y + 1))))
+             ((WhiteMoveExpected && CheckWhiteChecker(x - 2, y + 2) && CheckBlackChecker(x - 1, y + 1)) ||
+             (!WhiteMoveExpected && CheckBlackChecker(x - 2, y + 2) && CheckWhiteChecker(x - 1, y + 1))))
         {
             Hit(x - 1, y + 1);
             return true;
@@ -1342,12 +1166,6 @@ public class PlayScript : MonoBehaviour
             Hit(x + 1, y - 1);
             return true;
         }
-        return false;
-    }
-
-
-    bool QueenCanHit()
-    {
         if (ChosenQueen())
         {
             int a = ConvertxToIntCoordinate(ChosenChecker.transform.position.x);
@@ -1361,54 +1179,37 @@ public class PlayScript : MonoBehaviour
                 qy = b + i;
                 if (CheckEmptyCell(qx, qy))
                 {
-
                     if (((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))
                         || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2)))
-                        && CheckEmptyCells(qx + 2, qy + 2, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
+                        && qx + 2 == ConvertxToIntCoordinate(MousePos.x) && qy + 2 == ConvertyToIntCoordinate(MousePos.y))
                     {
-                        this.x = ConvertxToIntCoordinate(MousePos.x);
-                        this.y = ConvertyToIntCoordinate(MousePos.y);
+                        this.x = qx + 2;
+                        this.y = qy + 2;
                         Hit(qx + 1, qy + 1);
                         return true;
                     }
-                }
-                else if (CheckEmptyCells(qx + 1, qy + 1, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
-                {
-                    this.x = ConvertxToIntCoordinate(MousePos.x);
-                    this.y = ConvertyToIntCoordinate(MousePos.y);
-                    Hit(qx, qy);
-                    return true;
                 }
                 else
                 {
                     break;
                 }
             }
-
             // left bottom move
             for (int i = 1; a - i >= 0 && b - i >= 0; i++)
             {
                 qx = a - i;
                 qy = b - i;
-
                 if (CheckEmptyCell(qx, qy))
                 {
                     if (((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2))
                         || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2)))
-                        && CheckEmptyCells(qx - 2, qy - 2, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
+                        && qx - 2 == ConvertxToIntCoordinate(MousePos.x) && qy - 2 == ConvertyToIntCoordinate(MousePos.y))
                     {
-                        this.x = ConvertxToIntCoordinate(MousePos.x);
-                        this.y = ConvertyToIntCoordinate(MousePos.y);
+                        this.x = qx - 2;
+                        this.y = qy - 2;
                         Hit(qx - 1, qy - 1);
                         return true;
                     }
-                }
-                else if (CheckEmptyCells(qx - 1, qy - 1, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
-                {
-                    this.x = ConvertxToIntCoordinate(MousePos.x);
-                    this.y = ConvertyToIntCoordinate(MousePos.y);
-                    Hit(qx, qy);
-                    return true;
                 }
                 else
                 {
@@ -1424,20 +1225,13 @@ public class PlayScript : MonoBehaviour
                 {
                     if (((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2))
                         || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2)))
-                        && CheckEmptyCells(qx + 2, qy - 2, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
+                        && qx + 2 == ConvertxToIntCoordinate(MousePos.x) && qy - 2 == ConvertyToIntCoordinate(MousePos.y))
                     {
-                        this.x = ConvertxToIntCoordinate(MousePos.x);
-                        this.y = ConvertyToIntCoordinate(MousePos.y);
+                        this.x = qx + 2;
+                        this.y = qy - 2;
                         Hit(qx + 1, qy - 1);
                         return true;
                     }
-                }
-                else if (CheckEmptyCells(qx + 1, qy - 1, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
-                {
-                    this.x = ConvertxToIntCoordinate(MousePos.x);
-                    this.y = ConvertyToIntCoordinate(MousePos.y);
-                    Hit(qx, qy);
-                    return true;
                 }
                 else
                 {
@@ -1453,20 +1247,13 @@ public class PlayScript : MonoBehaviour
                 {
                     if (((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2))
                         || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2)))
-                        && CheckEmptyCells(qx - 2, qy + 2, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
+                        && qx - 2 == ConvertxToIntCoordinate(MousePos.x) && qy + 2 == ConvertyToIntCoordinate(MousePos.y))
                     {
-                        this.x = ConvertxToIntCoordinate(MousePos.x);
-                        this.y = ConvertyToIntCoordinate(MousePos.y);
+                        this.x = qx - 2;
+                        this.y = qy + 2;
                         Hit(qx - 1, qy + 1);
                         return true;
                     }
-                }
-                else if (CheckEmptyCells(qx - 1, qy + 1, ConvertxToIntCoordinate(MousePos.x), ConvertyToIntCoordinate(MousePos.y)))
-                {
-                    this.x = ConvertxToIntCoordinate(MousePos.x);
-                    this.y = ConvertyToIntCoordinate(MousePos.y);
-                    Hit(qx, qy);
-                    return true;
                 }
                 else
                 {
@@ -1475,6 +1262,87 @@ public class PlayScript : MonoBehaviour
             }
         }
 
+        return false;
+    }
+
+
+    bool QueenCanHit()
+    {
+        int a = ConvertxToIntCoordinate(ChosenChecker.transform.position.x);
+        int b = ConvertyToIntCoordinate(ChosenChecker.transform.position.y);
+        int qx = a;
+        int qy = b;
+        if (IsQueen(ChosenChecker))
+        {
+            for (int i = 1; a + i < 8 && b + i < 8; i++)
+            {
+                qx = a + i;
+                qy = b + i;
+                if (CheckEmptyCell(qx, qy))
+                {
+                    if ((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy + 1) && CheckEmptyCell(qx + 2, qy + 2)))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = 1; a - i >= 0 && b - i >= 0; i++)
+            {
+                qx = a - i;
+                qy = b - i;
+                if (CheckEmptyCell(qx, qy))
+                {
+                    if ((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy - 1) && CheckEmptyCell(qx - 2, qy - 2)))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = 1; a + i < 8 && b - i >= 0; i++)
+            {
+                qx = a + i;
+                qy = b - i;
+                if (CheckEmptyCell(qx, qy))
+                {
+                    if ((WhiteMoveExpected && CheckBlackChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx + 1, qy - 1) && CheckEmptyCell(qx + 2, qy - 2)))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = 1; a - i >= 0 && b + i < 8; i++)
+            {
+                qx = a - i;
+                qy = b + i;
+                if (CheckEmptyCell(qx, qy))
+                {
+                    if ((WhiteMoveExpected && CheckBlackChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2))
+                        || (!WhiteMoveExpected && CheckWhiteChecker(qx - 1, qy + 1) && CheckEmptyCell(qx - 2, qy + 2)))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
         return false;
     }
 
