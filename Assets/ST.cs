@@ -35,18 +35,9 @@ public class ST : MonoBehaviour {
         RightTopCorner = new Vector2(-37.21f, 2.83f);
         GameMenuOpened = false;
         MenuGameMove = 0;
-        if (File.Exists(Application.persistentDataPath + @"\Lang.cfg"))
-        {
-            BinaryReader br = new BinaryReader(new FileStream(Application.persistentDataPath + @"\Lang.cfg", FileMode.Open));
-            Language = br.ReadBoolean();
-            Music = br.ReadBoolean();
-            Sounds = br.ReadBoolean();
-            br.Close();
-        }
-        else
-        {
+
             Language = true;
-        }
+        
         SpeedMenu = 0;
         ArrowInTheTop = true;
         ArrowIsActive = true;

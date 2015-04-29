@@ -637,207 +637,9 @@ public class PlayScript : MonoBehaviour
         public bool WhiteMove;
     }
     // Save game
-    void Save()
-    {
-        BinaryFormatter formatter = new BinaryFormatter();
-        List<Point> wc = new List<Point>();
-        List<Point> bc = new List<Point>();
-        List<Point> wq = new List<Point>();
-        List<Point> bq = new List<Point>();
-        Point p;
-        KilledChecker k;
-        List<KilledChecker> l = new List<KilledChecker>();
-        foreach (var v in WhiteCheckersKilled)
-        {
-            k.x = v.transform.position.x;
-            k.y = v.transform.position.y;
-            k.z = v.transform.position.z;
-            if (v.name.CompareTo("WhiteQueen") == 1)
-            {
-                k.isQueen = true;
-            }
-            else
-            {
-                k.isQueen = false;
-            }
-            k.color = true;
-            l.Add(k);
-        }
-        foreach (var v in BlackCheckersKilled)
-        {
-            k.x = v.transform.position.x;
-            k.y = v.transform.position.y;
-            k.z = v.transform.position.z;
-            if (v.name.CompareTo("BlackQueen") == 1)
-            {
-                k.isQueen = true;
-            }
-            else
-            {
-                k.isQueen = false;
-            }
-            k.color = false;
-            l.Add(k);
-        }
-        foreach (Object o in WhiteCheckers)
-        {
-            obj = o as GameObject;
-            p.x = obj.transform.position.x;
-            p.y = obj.transform.position.y;
-            p.WhiteMove = WhiteMoveExpected;
-            wc.Add(p);
-        }
-        foreach (Object o in BlackCheckers)
-        {
-            obj = o as GameObject;
-            p.x = obj.transform.position.x;
-            p.y = obj.transform.position.y;
-            p.WhiteMove = WhiteMoveExpected;
-            bc.Add(p);
-        }
-        foreach (Object o in WhiteQueens)
-        {
-            obj = o as GameObject;
-            p.x = obj.transform.position.x;
-            p.y = obj.transform.position.y;
-            p.WhiteMove = WhiteMoveExpected;
-            wq.Add(p);
-        }
-        foreach (Object o in BlackQueens)
-        {
-            obj = o as GameObject;
-            p.x = obj.transform.position.x;
-            p.y = obj.transform.position.y;
-            p.WhiteMove = WhiteMoveExpected;
-            bq.Add(p);
-        }
-        using (var fStream = new FileStream(Application.persistentDataPath + @"\Save", FileMode.Create, FileAccess.Write, FileShare.None))
-        {
-            formatter.Serialize(fStream, wc);
-            formatter.Serialize(fStream, bc);
-            formatter.Serialize(fStream, wq);
-            formatter.Serialize(fStream, bq);
-            formatter.Serialize(fStream, l);
-
-        }
-
-    }
 
 
 
-
-    void DebugSave()
-    {
-        string s;
-        if (!File.Exists(Application.persistentDataPath + DebugFileName + ".log"))
-        {
-            (new FileStream(Application.persistentDataPath + DebugFileName + ".log", FileMode.Create, FileAccess.Write, FileShare.None)).Close();
-        }
-        for (int i = SIZE_OF_MATRIX - 1; i >= 0; i--)
-        {
-            s = string.Empty;
-            for (int j = 0; j < SIZE_OF_MATRIX; j++)
-            {
-                if (Array[i, j] == 1)
-                {
-                    s += "@";
-                }
-                if (Array[i, j] == 2)
-                {
-                    s += "#";
-                }
-                if (Array[i, j] == 0)
-                {
-                    s += "-";
-                }
-            }
-            File.AppendAllText(Application.persistentDataPath + DebugFileName + ".log", s + System.Environment.NewLine);
-        }
-        File.AppendAllText(Application.persistentDataPath + DebugFileName + ".log", "----------------------------" + System.Environment.NewLine);
-
-    }
-
-    // Load game
-    void Load()
-    {
-        Array = new int[8, 8];
-        BinaryFormatter formatter = new BinaryFormatter();
-        List<Point> wc;
-        List<Point> bc;
-        List<Point> wq;
-        List<Point> bq;
-        List<KilledChecker> l;
-        using (FileStream inStr = new FileStream(Application.persistentDataPath + @"\Save", FileMode.Open))
-        {
-            wc = formatter.Deserialize(inStr) as List<Point>;
-            bc = formatter.Deserialize(inStr) as List<Point>;
-            wq = formatter.Deserialize(inStr) as List<Point>;
-            bq = formatter.Deserialize(inStr) as List<Point>;
-            l = formatter.Deserialize(inStr) as List<KilledChecker>;
-        }
-        foreach (var v in l)
-        {
-            if (v.color)
-            {
-                if (v.isQueen)
-                {
-                    WhiteCheckersKilled.Add(Instantiate(WhiteQueen));
-                }
-                else
-                {
-                    WhiteCheckersKilled.Add(Instantiate(WhiteFigure));
-                }
-                WhiteCheckersKilled[WhiteCheckersKilled.Count - 1].transform.position = new Vector3(v.x, v.y, v.z);
-            }
-            else
-            {
-                if (v.isQueen)
-                {
-                   BlackCheckersKilled.Add(Instantiate(BlackQueen));
-                }
-                else
-                {
-                    BlackCheckersKilled.Add(Instantiate(BlackFigure));
-                }
-                BlackCheckersKilled[BlackCheckersKilled.Count - 1].transform.position = new Vector3(v.x, v.y, v.z);
-            }
-        }
-
-        WhiteCheckers = new List<GameObject>();
-        BlackCheckers = new List<GameObject>();
-        WhiteQueens = new List<GameObject>();
-        BlackQueens = new List<GameObject>();
-        GameObject obj;
-        foreach (Point p in wc)
-        {
-            WhiteMoveExpected = p.WhiteMove;
-            obj = Instantiate(WhiteFigure);
-            obj.transform.position = new Vector3(p.x, p.y, -1);
-            Array[ConvertyToIntCoordinate(p.y), ConvertxToIntCoordinate(p.x)] = 1;
-            WhiteCheckers.Add(obj);
-
-        }
-        foreach (Point p in bc)
-        {
-            WhiteMoveExpected = p.WhiteMove;
-            obj = Instantiate(BlackFigure);
-            obj.transform.position = new Vector3(p.x, p.y, -1);
-            Array[ConvertyToIntCoordinate(p.y), ConvertxToIntCoordinate(p.x)] = 2;
-            BlackCheckers.Add(obj);
-        }
-        foreach (Point p in wq)
-        {
-            obj = Instantiate(WhiteQueen);
-            obj.transform.position = new Vector3(p.x, p.y, -2);
-            WhiteQueens.Add(obj);
-        }
-        foreach (Point p in bq)
-        {
-            obj = Instantiate(BlackQueen);
-            obj.transform.position = new Vector3(p.x, p.y, -2);
-            BlackQueens.Add(obj);
-        }
-    }
     void TryToGetQueen(int x, int y)
     {
         if (CheckEmptyCell(x, y) && WhiteMoveExpected)
@@ -1119,6 +921,11 @@ public class PlayScript : MonoBehaviour
         FiguresHaveToHit.Clear();
         Save();
     }
+
+    void Save()
+    { }
+    void Load()
+    { }
 
     bool FindFigureToHit(int x, int y, List<GameObject> figures)
     {

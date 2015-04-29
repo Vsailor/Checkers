@@ -103,7 +103,7 @@ public class ButtonScript : MonoBehaviour
         }
         if (Button.name == "ResumeGameButton")
         {
-            if (!File.Exists(Application.persistentDataPath + @"\Save"))
+            if (!ST.Instanse.GameStarted)
             {
 
                 if (Language)
@@ -158,16 +158,6 @@ public class ButtonScript : MonoBehaviour
                     {
                         Camera.main.transform.position = new Vector3(-40.04f, Camera.main.transform.position.y, Camera.main.transform.position.z);
                     }
-                    else
-                    {
-                        if (File.Exists(Application.persistentDataPath + @"\Save"))
-                        {
-                            ST.Instanse.GameStarted = false;
-                            ST.Instanse.StartGame = true;
-                            Camera.main.transform.position = new Vector3(-40.04f, Camera.main.transform.position.y, Camera.main.transform.position.z);
-                            ST.Instanse.LoadFromSave = true;
-                        }
-                    }
 
                 }
                 if (Button.name == "ExitButton")
@@ -195,11 +185,7 @@ public class ButtonScript : MonoBehaviour
                     {
                         ST.Instanse.Language = true;
                     }
-                    BinaryWriter bw = new BinaryWriter(new FileStream(Application.persistentDataPath + @"\Lang.cfg", FileMode.Create));
-                    bw.Write(ST.Instanse.Language);
-                    bw.Write(ST.Instanse.Music);
-                    bw.Write(ST.Instanse.Sounds);
-                    bw.Close();
+     
                 }
                 if (Button.name == "MusicButton")
                 {
@@ -229,11 +215,7 @@ public class ButtonScript : MonoBehaviour
                             ST.Instanse.Music = true;
                         }
                     }
-                    BinaryWriter bw = new BinaryWriter(new FileStream(Application.persistentDataPath + @"\Lang.cfg", FileMode.Create));
-                    bw.Write(ST.Instanse.Language);
-                    bw.Write(ST.Instanse.Music);
-                    bw.Write(ST.Instanse.Sounds);
-                    bw.Close();
+
                 }
                 if (Button.name == "SoundsButton")
                 {
@@ -263,11 +245,6 @@ public class ButtonScript : MonoBehaviour
                             ST.Instanse.Sounds = true;
                         }
                     }
-                    BinaryWriter bw = new BinaryWriter(new FileStream(Application.persistentDataPath + @"\Lang.cfg", FileMode.Create));
-                    bw.Write(ST.Instanse.Language);
-                    bw.Write(ST.Instanse.Music);
-                    bw.Write(ST.Instanse.Sounds);
-                    bw.Close();
                 }
 
 
