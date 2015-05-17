@@ -14,6 +14,7 @@ public class CongratulationsScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        
         if (ST.Instanse.Winner != -1 && Camera.main.transform.position.x == -40.04f)
         {
             ST.Instanse.GameStarted = false;

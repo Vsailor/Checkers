@@ -724,39 +724,6 @@ public class PlayScript : MonoBehaviour
     }
 
 
-
-
-    void DebugSave()
-    {
-        string s;
-        if (!File.Exists(Application.persistentDataPath + DebugFileName + ".log"))
-        {
-            (new FileStream(Application.persistentDataPath + DebugFileName + ".log", FileMode.Create, FileAccess.Write, FileShare.None)).Close();
-        }
-        for (int i = SIZE_OF_MATRIX - 1; i >= 0; i--)
-        {
-            s = string.Empty;
-            for (int j = 0; j < SIZE_OF_MATRIX; j++)
-            {
-                if (Array[i, j] == 1)
-                {
-                    s += "@";
-                }
-                if (Array[i, j] == 2)
-                {
-                    s += "#";
-                }
-                if (Array[i, j] == 0)
-                {
-                    s += "-";
-                }
-            }
-            File.AppendAllText(Application.persistentDataPath + DebugFileName + ".log", s + System.Environment.NewLine);
-        }
-        File.AppendAllText(Application.persistentDataPath + DebugFileName + ".log", "----------------------------" + System.Environment.NewLine);
-
-    }
-
     // Load game
     void Load()
     {
@@ -1681,18 +1648,21 @@ public class PlayScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (ST.Instanse.GameStarted)
+        if (ST.Instanse != null)
         {
-            Init();
-            Playing();
+            if (ST.Instanse.GameStarted)
+            {
+                Init();
+                Playing();
 
 
-        }
-        if (ST.Instanse.StartGame)
-        {
-            Start2();
-            ST.Instanse.StartGame = false;
-            ST.Instanse.GameStarted = true;
+            }
+            if (ST.Instanse.StartGame)
+            {
+                Start2();
+                ST.Instanse.StartGame = false;
+                ST.Instanse.GameStarted = true;
+            }
         }
     }
 }

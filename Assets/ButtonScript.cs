@@ -27,15 +27,10 @@ public class ButtonScript : MonoBehaviour
     }
     void Init()
     {
-        try
-        {
-
             Language = ST.Instanse.Language;
             Music = ST.Instanse.Music;
             Sounds = ST.Instanse.Sounds;
-        }
-        catch (System.NullReferenceException)
-        { }
+
         Button_x1 = Button.transform.localPosition.x - Mathf.Abs(Button.transform.localScale.x) * 0.5;
         Button_x2 = Button_x1 + Mathf.Abs(Button.transform.localScale.x);
         Button_y1 = Button.transform.localPosition.y - Mathf.Abs(Button.transform.localScale.y) * 0.5;
@@ -132,9 +127,11 @@ public class ButtonScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Init();
-
-
+        if (ST.Instanse != null)
+        {
+            Init();
+        }
+        
         if (MousePos.x > Button_x1 && MousePos.x < Button_x2 &&
             MousePos.y > Button_y1 && MousePos.y < Button_y2)
         {
