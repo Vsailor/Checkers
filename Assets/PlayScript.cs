@@ -1488,18 +1488,21 @@ public class PlayScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (ST.Instanse.GameStarted)
+        if (ST.Instanse != null)
         {
-            Init();
-            Playing();
+            if (ST.Instanse.GameStarted)
+            {
+                Init();
+                Playing();
 
 
-        }
-        if (ST.Instanse.StartGame)
-        {
-            Start2();
-            ST.Instanse.StartGame = false;
-            ST.Instanse.GameStarted = true;
+            }
+            if (ST.Instanse.StartGame)
+            {
+                Start2();
+                ST.Instanse.StartGame = false;
+                ST.Instanse.GameStarted = true;
+            }
         }
     }
 }

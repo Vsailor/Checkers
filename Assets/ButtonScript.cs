@@ -132,7 +132,10 @@ public class ButtonScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Init();
+        if (ST.Instanse != null)
+        {
+            Init();
+        }
 
 
         if (MousePos.x > Button_x1 && MousePos.x < Button_x2 &&

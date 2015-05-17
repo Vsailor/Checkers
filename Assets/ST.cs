@@ -29,7 +29,7 @@ public class ST : MonoBehaviour {
 	void Start () {
         Winner = -1;
         LoadFromSave = false;
-        Music = true;
+        Music = false;
         Sounds = true;
         LeftBottomCorner = new Vector2(-42.88f, -2.83f);
         RightTopCorner = new Vector2(-37.21f, 2.83f);
